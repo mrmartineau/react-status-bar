@@ -1,7 +1,13 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
-  "files": {
-    "ignoreUnknown": false,
-    "includes": ["**", "!dist"]
-  }
+	"$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!dist",
+			"!demo/dist",
+			"!demo/node_modules",
+			"!**/routeTree.gen.ts"
+		]
+	}
 }

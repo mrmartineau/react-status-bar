@@ -2,28 +2,32 @@
 {
 	"compilerOptions": {
 		/* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"target": "es2022",
+		"lib": ["es2022", "dom", "dom.iterable"],
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"moduleDetection": "force",
+		"isolatedModules": true,
+		"verbatimModuleSyntax": true,
 
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
+		/* React */
+		"jsx": "react-jsx",
 
-    /* If transpiling with TypeScript: */
-    "module": "NodeNext",
-    "outDir": "dist",
-    "rootDir": "src",
-    "sourceMap": true,
+		/* Strictness */
+		"strict": true,
+		"noUncheckedIndexedAccess": true,
+		"noImplicitOverride": true,
 
-    /* AND if you're building for a library: */
-    "declaration": true,
+		/* If transpiling with TypeScript: */
+		"module": "NodeNext",
+		"outDir": "dist",
+		"rootDir": "src",
+		"sourceMap": true,
+
+		/* AND if you're building for a library: */
+		"declaration": true
 	},
-	"include": ["src/**/*.ts", "src/**/*.d.ts"]
+	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
 }
