@@ -2,7 +2,7 @@ import {
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 import { globalStore } from "../lib/status-store";
 
 /**
@@ -23,7 +23,7 @@ export function GlobalStatusBar() {
 				}
 			/>
 			{/* Baseline entry so the bar is never empty. */}
-			<StatusBar priority={-10}>react-status-bar</StatusBar>
+			<StatusBar priority={-10}>@mrmartineau/react-status-bar</StatusBar>
 		</StatusBarProvider>
 	);
 }

@@ -15,7 +15,7 @@ export default defineConfig({
 			// Resolve the library to its source so the demo edits the real package
 			// live. Consumers would instead get it from node_modules.
 			alias: {
-				"react-status-bar": fileURLToPath(
+				"@mrmartineau/react-status-bar": fileURLToPath(
 					new URL("../src/index.tsx", import.meta.url),
 				),
 			},

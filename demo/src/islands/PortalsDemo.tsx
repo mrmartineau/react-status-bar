@@ -4,7 +4,7 @@ import {
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
 export function PortalsDemo() {
 	const [connected, setConnected] = useState(true);

@@ -11,9 +11,9 @@ const exports = `import {
   StatusBarViewport,   // host — reads a scope and renders it
   useStatusBar,        // imperative show()/hide()
   createStatusStore,   // the plain-JS store (tests / DI)
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
-import type { StatusEntry, StatusBarMode, StatusStore } from "react-status-bar";`;
+import type { StatusEntry, StatusBarMode, StatusStore } from "@mrmartineau/react-status-bar";`;
 
 const useHook = `const sb = useStatusBar({ scope?: string });
 

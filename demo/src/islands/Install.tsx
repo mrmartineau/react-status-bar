@@ -3,10 +3,10 @@ import { useState } from "react";
 import { CopyButton } from "./CopyButton";
 
 const INSTALL: Record<string, string> = {
-	bun: "bun add react-status-bar",
-	npm: "npm install react-status-bar",
-	pnpm: "pnpm add react-status-bar",
-	yarn: "yarn add react-status-bar",
+	bun: "bun add @mrmartineau/react-status-bar",
+	npm: "npm install @mrmartineau/react-status-bar",
+	pnpm: "pnpm add @mrmartineau/react-status-bar",
+	yarn: "yarn add @mrmartineau/react-status-bar",
 };
 
 export function Install() {

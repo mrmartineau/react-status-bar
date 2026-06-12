@@ -1,4 +1,4 @@
-import { createStatusStore } from "react-status-bar";
+import { createStatusStore } from "@mrmartineau/react-status-bar";
 
 /**
  * A single store shared across every island on the page.

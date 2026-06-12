@@ -5,7 +5,7 @@ import {
 	type StatusBarMode,
 	StatusBarProvider,
 	StatusBarViewport,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
 export function ModesDemo() {
 	const [mode, setMode] = useState<StatusBarMode>("stack");

@@ -1,4 +1,4 @@
-import { StatusBar, StatusBarProvider } from "react-status-bar";
+import { StatusBar, StatusBarProvider } from "@mrmartineau/react-status-bar";
 import { globalStore } from "../lib/status-store";
 
 /**

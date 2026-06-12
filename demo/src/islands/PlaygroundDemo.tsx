@@ -5,7 +5,7 @@ import {
 	type StatusBarMode,
 	StatusBarProvider,
 	StatusBarViewport,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
 type Item = { id: string; text: string; priority: number };
 

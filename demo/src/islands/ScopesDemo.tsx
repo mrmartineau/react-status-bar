@@ -4,7 +4,7 @@ import {
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
 export function ScopesDemo() {
 	const [spellcheck, setSpellcheck] = useState(true);

@@ -12,7 +12,7 @@ import { OverviewDemo } from "../islands/OverviewDemo.tsx";
 import { PageStatus } from "../islands/PageStatus.tsx";
 import Layout from "../layouts/Layout.astro";
 
-const quickStart = `import { StatusBarProvider, StatusBarViewport, StatusBar } from "react-status-bar";
+const quickStart = `import { StatusBarProvider, StatusBarViewport, StatusBar } from "@mrmartineau/react-status-bar";
 
 <StatusBarProvider>
   <StatusBarViewport mode="stack" separator="•" />
@@ -58,12 +58,12 @@ const features = [
 ];
 ---
 
-<Layout title="react-status-bar — overview">
+<Layout title="React Status Bar — overview">
 	<PageStatus label="👋 Overview" client:load />
 
 	<header class="hero">
 		<span class="hero__eyebrow">react · 2&nbsp;kB · zero-config</span>
-		<h1 class="hero__title">react-status-bar</h1>
+		<h1 class="hero__title">React Status Bar</h1>
 		<p class="hero__lead">
 			A lightweight, portal-based <strong>status bar system for React</strong>. Any
 			component can push UI into a shared bar; a viewport aggregates the entries
@@ -93,7 +93,7 @@ const features = [
 	</Card>
 
 	<Card class="card">
-		<CardHeader><CardTitle>Why react-status-bar</CardTitle></CardHeader>
+		<CardHeader><CardTitle>Why React Status Bar</CardTitle></CardHeader>
 		<CardBody>
 			<div class="features">
 				{

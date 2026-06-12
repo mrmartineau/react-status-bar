@@ -2,7 +2,7 @@ import {
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
 /** Self-contained island: provider + viewport + three producers. */
 export function OverviewDemo() {

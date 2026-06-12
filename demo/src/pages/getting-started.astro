@@ -5,7 +5,7 @@ import { PageStatus } from "../islands/PageStatus.tsx";
 import Layout from "../layouts/Layout.astro";
 
 const mountSnippet = `// AppShell.tsx
-import { StatusBarProvider, StatusBarViewport } from "react-status-bar";
+import { StatusBarProvider, StatusBarViewport } from "@mrmartineau/react-status-bar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -26,7 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 }`;
 
-const contributeSnippet = `import { StatusBar } from "react-status-bar";
+const contributeSnippet = `import { StatusBar } from "@mrmartineau/react-status-bar";
 
 function Editor() {
   return (
@@ -37,7 +37,7 @@ function Editor() {
   );
 }`;
 
-const imperativeSnippet = `import { useStatusBar } from "react-status-bar";
+const imperativeSnippet = `import { useStatusBar } from "@mrmartineau/react-status-bar";
 
 function SaveButton() {
   const sb = useStatusBar();
@@ -61,7 +61,7 @@ const scopesSnippet = `<StatusBarViewport scope="global" portalTarget="#statusba
 <StatusBar scope="editor">Spellcheck enabled</StatusBar>`;
 ---
 
-<Layout title="react-status-bar — getting started">
+<Layout title="React Status Bar — getting started">
 	<PageStatus label="Viewing: getting started" client:load />
 
 	<header class="page__head">

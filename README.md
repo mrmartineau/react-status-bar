@@ -1,4 +1,4 @@
-# react-status-bar
+# @mrmartineau/react-status-bar
 
 A lightweight, portal-based **status bar system for React**. Any component can push UI into a shared bar; a viewport aggregates the entries and renders them — optionally portaled to a fixed location in the DOM.
 
@@ -29,9 +29,11 @@ Built on an external store + `useSyncExternalStore`, so a status change re-rende
 ## Install
 
 ```bash
-bun add react-status-bar
+bun add @mrmartineau/react-status-bar
 # or
-npm install react-status-bar
+pnpm install @mrmartineau/react-status-bar
+# or
+npm install @mrmartineau/react-status-bar
 ```
 
 `react` and `react-dom` (18+) are peer dependencies.
@@ -41,7 +43,7 @@ npm install react-status-bar
 ### 1. Mount the provider and a viewport
 
 ```tsx
-import { StatusBarProvider, StatusBarViewport } from "react-status-bar";
+import { StatusBarProvider, StatusBarViewport } from "@mrmartineau/react-status-bar";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -60,7 +62,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 ### 2. Contribute from anywhere
 
 ```tsx
-import { StatusBar } from "react-status-bar";
+import { StatusBar } from "@mrmartineau/react-status-bar";
 
 function Editor() {
   return (
@@ -86,7 +88,7 @@ With `mode="stack"` the viewport renders all entries sorted by priority then rec
 ### 4. Imperative API
 
 ```tsx
-import { useStatusBar } from "react-status-bar";
+import { useStatusBar } from "@mrmartineau/react-status-bar";
 
 function SaveButton() {
   const sb = useStatusBar();

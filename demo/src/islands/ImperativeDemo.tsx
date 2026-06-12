@@ -4,7 +4,7 @@ import {
 	StatusBarProvider,
 	StatusBarViewport,
 	useStatusBar,
-} from "react-status-bar";
+} from "@mrmartineau/react-status-bar";
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
