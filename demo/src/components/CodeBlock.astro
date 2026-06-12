@@ -1,0 +1,23 @@
+---
+import { Code } from "astro:components";
+import { CopyButton } from "../islands/CopyButton.tsx";
+
+interface Props {
+	code: string;
+	lang?: string;
+}
+const { code, lang = "tsx" } = Astro.props;
+---
+
+<div class="code">
+	<div class="code__head">
+		<span class="code__lang">{lang}</span>
+		<CopyButton value={code} label="Copy code" client:load />
+	</div>
+	<Code
+		code={code}
+		lang={lang as never}
+		themes={{ light: "github-light", dark: "github-dark" }}
+		defaultColor={false}
+	/>
+</div>

@@ -175,7 +175,7 @@ Entries register in effects, so the server and the hydration pass both render an
 
 ## Demo
 
-A Vite + TanStack Router demo lives in [`demo/`](./demo) with pages covering every feature:
+An [Astro](https://astro.build) demo (React islands for the interactive parts, [ZUI](https://github.com/mrmartineau/zui) for styling, Shiki-highlighted code) lives in [`demo/`](./demo) with pages covering every feature:
 
 ```bash
 cd demo && bun install && bun run dev

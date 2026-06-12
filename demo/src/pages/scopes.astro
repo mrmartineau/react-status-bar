@@ -1,0 +1,39 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import { ScopesDemo } from "../islands/ScopesDemo.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `<StatusBarViewport scope="editor" mode="stack" />
+<StatusBarViewport scope="notifications" mode="replace" />
+
+<StatusBar scope="editor">Spellcheck enabled</StatusBar>
+<StatusBar scope="notifications">🔔 2 unread notifications</StatusBar>`;
+---
+
+<Layout title="react-status-bar — scopes">
+	<PageStatus label="Viewing: scopes" client:load />
+
+	<header class="page__head">
+		<h1 class="page__title">Scopes</h1>
+		<p class="page__lead">
+			One provider can drive any number of <em>independent</em> bars. Each viewport
+			reads a single <code>scope</code> and re-renders only when that scope changes.
+			Below: an <code>editor</code> bar and a <code>notifications</code> bar, fed by
+			separate producers.
+		</p>
+	</header>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Two scopes, one provider</CardTitle></CardHeader>
+		<CardBody>
+			<ScopesDemo client:visible />
+			<p>
+				Toggling the editor controls never re-renders the notifications viewport,
+				and vice versa — the subscriptions are per-scope.
+			</p>
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+</Layout>

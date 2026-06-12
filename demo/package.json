@@ -4,23 +4,25 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "portless run vite",
-		"build": "vite build",
-		"preview": "vite preview",
-		"typecheck": "tsc --noEmit"
+		"dev": "portless run astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"check": "astro check"
 	},
 	"dependencies": {
-		"@tanstack/react-router": "^1.95.0",
+		"@astrojs/react": "^5.0.0",
+		"@mrmartineau/zui": "^1.2.0",
+		"@phosphor-icons/react": "^2",
+		"@phosphor-icons/web": "^2",
+		"astro": "^6.0.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0"
 	},
 	"devDependencies": {
-		"@types/node": "^25.4.0",
+		"@astrojs/check": "^0.9.4",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
-		"@vitejs/plugin-react": "^4.3.4",
-		"typescript": "^5.9.3",
-		"vite": "^6.0.0"
+		"typescript": "^5.9.3"
 	},
 	"portless": "status-bar"
 }

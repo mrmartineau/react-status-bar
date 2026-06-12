@@ -1,0 +1,46 @@
+---
+import {
+	Code,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "@mrmartineau/zui/astro";
+
+interface Row {
+	name: string;
+	type: string;
+	default?: string;
+	notes: string;
+}
+const { rows } = Astro.props as { rows: Row[] };
+---
+
+<div class="proptable-wrap">
+	<Table>
+		<TableHeader>
+			<TableRow>
+				<TableHead>Prop</TableHead>
+				<TableHead>Type</TableHead>
+				<TableHead>Default</TableHead>
+				<TableHead>Notes</TableHead>
+			</TableRow>
+		</TableHeader>
+		<TableBody>
+			{
+				rows.map((r) => (
+					<TableRow>
+						<TableCell><Code>{r.name}</Code></TableCell>
+						<TableCell><Code class="proptable__type">{r.type}</Code></TableCell>
+						<TableCell>
+							{r.default ? <Code>{r.default}</Code> : <span class="muted">—</span>}
+						</TableCell>
+						<TableCell set:html={r.notes} />
+					</TableRow>
+				))
+			}
+		</TableBody>
+	</Table>
+</div>

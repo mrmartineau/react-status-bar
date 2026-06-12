@@ -1,0 +1,42 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { ModesDemo } from "../islands/ModesDemo.tsx";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `const [mode, setMode] = useState("stack")
+
+<StatusBarViewport mode={mode} separator="•" />
+
+<StatusBar priority={5}>🔴 Recording</StatusBar>
+<StatusBar priority={3}>2 warnings</StatusBar>
+<StatusBar priority={1}>Ln 42, Col 8</StatusBar>`;
+---
+
+<Layout title="react-status-bar — replace vs stack">
+	<PageStatus label="Viewing: modes" client:load />
+
+	<header class="page__head">
+		<h1 class="page__title">Replace vs Stack</h1>
+		<p class="page__lead">
+			Presentation is a <em>viewport</em> concern, not a producer one. The exact
+			same three producers render differently depending on the viewport's
+			<code>mode</code>. Flip it and watch.
+		</p>
+	</header>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Same producers, two presentations</CardTitle></CardHeader>
+		<CardBody>
+			<ModesDemo client:visible />
+			<p>
+				<strong>replace</strong> shows only the highest-priority entry —
+				<code>🔴 Recording</code> (priority 5). <strong>stack</strong> shows all
+				three, sorted by priority then recency. The producers are identical in
+				both cases.
+			</p>
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+</Layout>

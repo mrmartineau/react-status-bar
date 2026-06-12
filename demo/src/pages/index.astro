@@ -1,0 +1,126 @@
+---
+import {
+	Button,
+	Card,
+	CardBody,
+	CardHeader,
+	CardTitle,
+} from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { Install } from "../islands/Install.tsx";
+import { OverviewDemo } from "../islands/OverviewDemo.tsx";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const quickStart = `import { StatusBarProvider, StatusBarViewport, StatusBar } from "react-status-bar";
+
+<StatusBarProvider>
+  <StatusBarViewport mode="stack" separator="•" />
+
+  {/* …anywhere deeper in the tree… */}
+  <StatusBar priority={5}>Preview mode</StatusBar>
+  <StatusBar priority={3}>3 unresolved comments</StatusBar>
+  <StatusBar priority={2}>Autosaving…</StatusBar>
+</StatusBarProvider>
+// → "Preview mode • 3 unresolved comments • Autosaving…"`;
+
+const features = [
+	{
+		icon: "ph-puzzle-piece",
+		title: "Side-effect API",
+		body: "<StatusBar>…</StatusBar> registers content while mounted, removes it on unmount.",
+	},
+	{
+		icon: "ph-gauge",
+		title: "Surgical re-renders",
+		body: "Per-scope subscriptions via useSyncExternalStore — only the affected viewport repaints.",
+	},
+	{
+		icon: "ph-app-window",
+		title: "Portaled output",
+		body: "Mount the bar into a fixed shell node anywhere, or render inline.",
+	},
+	{
+		icon: "ph-stack",
+		title: "Scopes",
+		body: "Independent bars (global, editor, modal-42) from a single provider.",
+	},
+	{
+		icon: "ph-wheelchair",
+		title: "Accessible",
+		body: "One always-mounted aria-live region so screen readers announce reliably.",
+	},
+	{
+		icon: "ph-plugs-connected",
+		title: "SSR-safe",
+		body: "Server snapshot is always empty → zero hydration mismatch.",
+	},
+];
+---
+
+<Layout title="react-status-bar — overview">
+	<PageStatus label="👋 Overview" client:load />
+
+	<header class="hero">
+		<span class="hero__eyebrow">react · 2&nbsp;kB · zero-config</span>
+		<h1 class="hero__title">react-status-bar</h1>
+		<p class="hero__lead">
+			A lightweight, portal-based <strong>status bar system for React</strong>. Any
+			component can push UI into a shared bar; a viewport aggregates the entries
+			and renders them — optionally portaled anywhere in the DOM.
+		</p>
+
+		<Install client:load />
+
+		<div class="hero__links">
+			<Button href="/getting-started" variant="fill">Get started →</Button>
+			<Button href="/api" variant="outline">API reference</Button>
+			<Button href="https://github.com/mrmartineau/react-status-bar" variant="ghost">GitHub</Button>
+		</div>
+	</header>
+
+	<Card class="card">
+		<CardHeader><CardTitle>See it live</CardTitle></CardHeader>
+		<CardBody>
+			<p>
+				The three producers below all target one scope. The viewport sorts by
+				priority then recency and renders them. The bar pinned to the bottom of
+				the window is another viewport — this page is pushing into it right now.
+			</p>
+			<OverviewDemo client:visible />
+			<CodeBlock code={quickStart} lang="tsx" />
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Why react-status-bar</CardTitle></CardHeader>
+		<CardBody>
+			<div class="features">
+				{
+					features.map((f) => (
+						<div class="feature">
+							<span class="feature__icon" aria-hidden="true">
+								<i class={`ph ${f.icon}`} />
+							</span>
+							<strong class="feature__title">{f.title}</strong>
+							<span class="feature__body">{f.body}</span>
+						</div>
+					))
+				}
+			</div>
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Explore the examples</CardTitle></CardHeader>
+		<CardBody>
+			<ul class="tag-list">
+				<li><a class="doclink" href="/modes">Replace vs Stack</a> — viewport-owned presentation</li>
+				<li><a class="doclink" href="/imperative">Imperative API</a> — useStatusBar().show() in async flows</li>
+				<li><a class="doclink" href="/scopes">Scopes</a> — multiple independent bars</li>
+				<li><a class="doclink" href="/portals">Portals</a> — render output anywhere in the DOM</li>
+				<li><a class="doclink" href="/playground">Playground</a> — add/remove entries on the fly</li>
+			</ul>
+		</CardBody>
+	</Card>
+</Layout>

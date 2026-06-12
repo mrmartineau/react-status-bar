@@ -7,7 +7,7 @@
 			"!dist",
 			"!demo/dist",
 			"!demo/node_modules",
-			"!**/routeTree.gen.ts"
+			"!**/*.astro"
 		]
 	}
 }

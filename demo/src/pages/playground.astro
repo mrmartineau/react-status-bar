@@ -1,0 +1,39 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import { PlaygroundDemo } from "../islands/PlaygroundDemo.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `const [items, setItems] = useState(INITIAL)
+
+<StatusBarViewport mode={mode} separator="•" />
+
+{items.map((it) => (
+  <StatusBar key={it.id} id={it.id} priority={it.priority}>
+    {it.text}
+  </StatusBar>
+))}
+// remove from \`items\` → producer unmounts → entry leaves the bar`;
+---
+
+<Layout title="react-status-bar — playground">
+	<PageStatus label="Viewing: playground" client:load />
+
+	<header class="page__head">
+		<h1 class="page__title">Playground</h1>
+		<p class="page__lead">
+			Add and remove entries on the fly. Each row is a real <code>&lt;StatusBar&gt;</code>
+			with a stable <code>id</code> — removing a row unmounts it, and the entry leaves
+			the bar automatically. No manual cleanup.
+		</p>
+	</header>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Live entry editor</CardTitle></CardHeader>
+		<CardBody>
+			<PlaygroundDemo client:visible />
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+</Layout>

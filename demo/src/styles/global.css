@@ -1,0 +1,652 @@
+/*
+ * Demo chrome styles. ZUI (@mrmartineau/zui/css) owns the reset, base layer,
+ * design tokens, and component styling. Static chrome uses ZUI Astro
+ * components; interactive parts are React islands using ZUI React components.
+ * Every colour / radius / space here is sourced from a ZUI token. Local aliases
+ * bridge old names onto ZUI's semantic tokens so the demo follows the active
+ * light/dark colour scheme (toggled via :root.zui-dark / :root.zui-light).
+ */
+:root {
+	--bg: var(--color-background);
+	--bg-2: var(--color-surface);
+	--panel: var(--color-surface);
+	--panel-2: oklch(from var(--color-surface) calc(l + 0.04) c h);
+	--border: var(--color-border);
+	--text: var(--color-text);
+	--muted: oklch(from var(--color-text) l c h / 0.66);
+	--accent: var(--color-theme);
+	--radius: var(--radius-lg);
+	--mono: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+	--sidebar-w: 248px;
+	--bar-h: 40px;
+}
+
+/* ---------- Layout ---------- */
+.app {
+	display: grid;
+	grid-template-columns: var(--sidebar-w) 1fr;
+	min-height: 100vh;
+}
+
+.sidebar {
+	position: sticky;
+	top: 0;
+	align-self: start;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-md);
+	padding: var(--space-md) var(--space-sm);
+	background: var(--bg-2);
+	border-right: var(--border-style) 1px var(--border);
+}
+
+.sidebar__brand {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: var(--space-2xs) var(--space-xs);
+}
+
+.sidebar__logo {
+	display: grid;
+	place-items: center;
+	color: var(--accent);
+	font-size: var(--step-3);
+}
+
+.sidebar__title {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.2;
+}
+
+.sidebar__title small {
+	color: var(--muted);
+	font-size: var(--step--2);
+}
+
+.nav {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-sm);
+}
+
+.nav__group {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.nav__heading {
+	font-size: var(--step--2);
+	letter-spacing: 0.09em;
+	text-transform: uppercase;
+	color: var(--muted);
+	padding: var(--space-2xs) var(--space-xs);
+	opacity: 0.7;
+}
+
+.nav__link {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: var(--space-2xs) var(--space-xs);
+	border-radius: var(--radius-md);
+	color: var(--muted);
+	text-decoration: none;
+	font-size: var(--step--1);
+	transition:
+		background 0.12s ease,
+		color 0.12s ease;
+}
+
+.nav__link .ph {
+	font-size: var(--step-1);
+}
+
+.nav__link:hover {
+	background: var(--panel-2);
+	color: var(--text);
+}
+
+.nav__link--active {
+	background: var(--panel-2);
+	color: var(--text);
+	box-shadow: inset 2px 0 0 var(--accent);
+}
+
+.sidebar__foot {
+	margin-top: auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-2xs);
+}
+
+.sidebar__gh {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--radius-md);
+	color: var(--muted);
+	font-size: var(--step-2);
+}
+
+.sidebar__gh:hover {
+	color: var(--text);
+	background: var(--panel-2);
+}
+
+.main {
+	padding: var(--space-xl) clamp(var(--space-md), 4vw, var(--space-2xl));
+	padding-bottom: calc(var(--bar-h) + var(--space-2xl));
+	max-width: 920px;
+}
+
+/* ---------- Page ---------- */
+.page__head {
+	margin-bottom: var(--space-lg);
+}
+
+.page__title {
+	margin: 0 0 var(--space-2xs);
+	font-size: var(--step-5);
+	letter-spacing: -0.02em;
+}
+
+.page__lead {
+	margin: 0;
+	color: var(--muted);
+	max-width: 62ch;
+}
+
+/* ZUI Card already provides surface/border/radius/padding; only outer rhythm. */
+.card {
+	margin-bottom: var(--space-md);
+}
+
+.card p {
+	color: var(--muted);
+}
+
+.card strong {
+	color: var(--text);
+}
+
+.demo-subhead {
+	margin: var(--space-md) 0 var(--space-2xs);
+	font-size: var(--step-0);
+	color: var(--text);
+}
+
+.demo-subhead:first-child {
+	margin-top: 0;
+}
+
+/* ---------- Demo surface ---------- */
+.surface {
+	position: relative;
+	background: var(--bg);
+	border: var(--border-style) 1px var(--border);
+	border-radius: var(--radius);
+	margin: var(--space-sm) 0;
+	overflow: hidden;
+}
+
+.surface__label {
+	display: block;
+	font-size: var(--step--2);
+	color: var(--muted);
+	font-family: var(--mono);
+	padding: var(--space-2xs) var(--space-xs);
+	border-bottom: 1px dashed var(--border);
+	background: var(--bg-2);
+}
+
+.surface__body {
+	padding: var(--space-2xs) var(--space-xs);
+}
+
+/* ---------- Controls ---------- */
+.controls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2xs);
+	margin: var(--space-2xs) 0;
+}
+
+.controls__hint {
+	color: var(--muted);
+	font-size: var(--step--1);
+	font-family: var(--mono);
+}
+
+.field {
+	display: inline-flex;
+	flex-direction: column;
+	gap: 4px;
+	font-size: var(--step--2);
+	color: var(--muted);
+}
+
+.input-num {
+	width: 6rem;
+}
+
+.charcounter {
+	margin-top: var(--space-sm);
+}
+
+/* ---------- Code blocks (Astro + Shiki dual theme) ---------- */
+.code {
+	border: var(--border-style) 1px var(--border);
+	border-radius: var(--radius);
+	overflow: hidden;
+	margin: var(--space-sm) 0 0;
+}
+
+.code__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 4px 4px var(--space-xs);
+	border-bottom: var(--border-style) 1px var(--border);
+	background: var(--bg-2);
+}
+
+.code__lang {
+	font-family: var(--mono);
+	font-size: var(--step--2);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--muted);
+}
+
+/* Drive Shiki dual themes from the active colour scheme. Defaults to light;
+   dark wins when ZUI forces dark, or the system prefers dark (unless forced
+   light). Token spans only carry the colour var; the <pre> carries the bg.
+   Base (lowest-specificity) rules first to keep the cascade tidy. */
+.astro-code,
+.astro-code span {
+	color: var(--shiki-light);
+}
+
+.astro-code {
+	background-color: var(--shiki-light-bg);
+}
+
+.code .astro-code {
+	margin: 0;
+	padding: var(--space-sm) var(--space-md);
+	overflow-x: auto;
+	font-size: var(--step--1);
+}
+
+:root.zui-dark .astro-code,
+:root.zui-dark .astro-code span {
+	color: var(--shiki-dark);
+}
+
+:root.zui-dark .astro-code {
+	background-color: var(--shiki-dark-bg);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not(.zui-light) .astro-code,
+	:root:not(.zui-light) .astro-code span {
+		color: var(--shiki-dark);
+	}
+	:root:not(.zui-light) .astro-code {
+		background-color: var(--shiki-dark-bg);
+	}
+}
+
+/* ---------- Install widget ---------- */
+.install {
+	max-width: 460px;
+	border: var(--border-style) 1px var(--border);
+	border-radius: var(--radius);
+	overflow: hidden;
+	background: var(--bg);
+}
+
+.install__tabs {
+	display: flex;
+	gap: 2px;
+	padding: 4px;
+	border-bottom: var(--border-style) 1px var(--border);
+	background: var(--bg-2);
+}
+
+.install__cmd {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-sm);
+	padding: var(--space-xs) var(--space-sm);
+	font-family: var(--mono);
+	font-size: var(--step--1);
+}
+
+.install__prompt {
+	color: var(--accent);
+	user-select: none;
+	margin-right: 4px;
+}
+
+/* ---------- Feature grid ---------- */
+.features {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: var(--space-2xs);
+}
+
+.feature {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	background: var(--bg-2);
+	border: var(--border-style) 1px var(--border);
+	border-radius: var(--radius);
+	padding: var(--space-sm);
+}
+
+.feature__icon {
+	display: inline-flex;
+	font-size: var(--step-4);
+	color: var(--accent);
+}
+
+.feature__title {
+	font-size: var(--step-0);
+}
+
+.feature__body {
+	font-size: var(--step--1);
+	color: var(--muted);
+}
+
+/* ---------- Props table tweaks (ZUI Table owns the rest) ---------- */
+.proptable-wrap {
+	overflow-x: auto;
+	margin-top: var(--space-2xs);
+}
+
+.zui-code.proptable__type {
+	color: var(--accent);
+}
+
+.muted {
+	color: var(--muted);
+}
+
+/* ---------- Callout ---------- */
+.callout {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	border: var(--border-style) 1px var(--border);
+	border-left-width: 3px;
+	border-radius: var(--radius-md);
+	padding: var(--space-xs) var(--space-sm);
+	margin: var(--space-sm) 0 0;
+	font-size: var(--step--1);
+	background: var(--bg-2);
+}
+
+.callout p {
+	margin: 0;
+}
+
+.callout--info {
+	border-left-color: var(--accent);
+}
+
+.callout--warn {
+	border-left-color: var(--color-warning);
+}
+
+.callout strong {
+	color: var(--text);
+}
+
+/* ---------- Step (getting started) ---------- */
+.step {
+	margin-bottom: var(--space-lg);
+}
+
+.step__head {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	margin-bottom: var(--space-2xs);
+}
+
+.step__num {
+	display: grid;
+	place-items: center;
+	width: 26px;
+	height: 26px;
+	border-radius: var(--radius-full);
+	background: var(--accent);
+	color: var(--color-background);
+	font-size: var(--step--1);
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+.step__title {
+	margin: 0;
+	font-size: var(--step-2);
+}
+
+.step__body {
+	padding-left: calc(26px + var(--space-2xs));
+}
+
+.step__body p {
+	color: var(--muted);
+	margin: 0 0 var(--space-2xs);
+}
+
+.step__body strong {
+	color: var(--text);
+}
+
+/* ---------- Tag list ---------- */
+.tag-list {
+	list-style: none;
+	padding: 0;
+	margin: var(--space-xs) 0 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.tag-list li {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	background: var(--bg-2);
+	border: var(--border-style) 1px var(--border);
+	border-radius: var(--radius-md);
+	padding: var(--space-2xs) var(--space-xs);
+	font-size: var(--step--1);
+	color: var(--muted);
+}
+
+.tag-list .prio {
+	font-family: var(--mono);
+	color: var(--accent);
+	font-size: var(--step--2);
+}
+
+.tag-list button {
+	margin-left: auto;
+}
+
+.doclink {
+	color: var(--accent);
+	text-decoration: none;
+	font-weight: 600;
+}
+
+.doclink:hover {
+	text-decoration: underline;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+	margin-bottom: var(--space-xl);
+}
+
+.hero__eyebrow {
+	display: inline-block;
+	font-family: var(--mono);
+	font-size: var(--step--2);
+	color: var(--accent);
+	background: oklch(from var(--accent) l c h / 0.12);
+	border: var(--border-style) 1px oklch(from var(--accent) l c h / 0.3);
+	padding: 2px var(--space-2xs);
+	border-radius: var(--radius-full);
+	margin-bottom: var(--space-sm);
+}
+
+.hero__title {
+	margin: 0 0 var(--space-2xs);
+	font-size: var(--step-8);
+	letter-spacing: -0.03em;
+	background: linear-gradient(120deg, var(--color-text), var(--accent));
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+}
+
+.hero__lead {
+	margin: 0 0 var(--space-md);
+	font-size: var(--step-1);
+	color: var(--muted);
+	max-width: 60ch;
+}
+
+.hero__lead strong {
+	color: var(--text);
+}
+
+.hero__links {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-2xs);
+	margin-top: var(--space-md);
+}
+
+/* ---------- Fake window (portals demo) ---------- */
+.window {
+	border: var(--border-style) 1px var(--border);
+	border-radius: var(--radius);
+	overflow: hidden;
+	background: var(--bg-2);
+	margin: var(--space-sm) 0;
+}
+
+.window__bar {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3xs);
+	padding: var(--space-2xs) var(--space-xs);
+	background: var(--panel-2);
+	border-bottom: var(--border-style) 1px var(--border);
+	font-size: var(--step--1);
+	color: var(--muted);
+}
+
+.window__dot {
+	width: 11px;
+	height: 11px;
+	border-radius: var(--radius-full);
+	background: var(--border);
+}
+
+.window__body {
+	padding: var(--space-sm);
+	min-height: 90px;
+	color: var(--muted);
+}
+
+.window__status {
+	border-top: var(--border-style) 1px var(--border);
+	background: var(--panel);
+	padding: 0 var(--space-xs);
+	min-height: 30px;
+	display: flex;
+	align-items: center;
+	font-size: var(--step--1);
+}
+
+/* ---------- The library's status bar (shared classes) ---------- */
+.statusbar {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	min-height: 28px;
+	font-size: var(--step--1);
+}
+
+.statusbar__item {
+	white-space: nowrap;
+}
+
+.statusbar__sep {
+	opacity: 0.5;
+}
+
+.statusbar[data-empty] {
+	color: var(--muted);
+	font-style: italic;
+}
+
+/* ---------- Fixed global bar ---------- */
+.statusbar-shell {
+	position: fixed;
+	left: var(--sidebar-w);
+	right: 0;
+	bottom: 0;
+	min-height: var(--bar-h);
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding: 0 var(--space-md);
+	background: oklch(from var(--color-surface) l c h / 0.92);
+	backdrop-filter: blur(8px);
+	border-top: var(--border-style) 1px var(--border);
+	font-size: var(--step--1);
+	z-index: var(--z-2);
+}
+
+.statusbar-shell__idle {
+	color: var(--muted);
+	font-style: italic;
+}
+
+.statusbar-shell .statusbar {
+	min-height: var(--bar-h);
+}
+
+@media (max-width: 720px) {
+	.app {
+		grid-template-columns: 1fr;
+	}
+	.sidebar {
+		position: static;
+		height: auto;
+	}
+	.statusbar-shell {
+		left: 0;
+	}
+	.step__body {
+		padding-left: 0;
+	}
+}

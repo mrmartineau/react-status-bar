@@ -1,0 +1,45 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { ImperativeDemo } from "../islands/ImperativeDemo.tsx";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `function SaveButton() {
+  const sb = useStatusBar();
+
+  async function onClick() {
+    sb.show("💾 Saving…", { priority: 2 });
+    try {
+      await save();
+      sb.show("✓ Saved", { priority: 4 });   // same entry, updated in place
+      setTimeout(() => sb.hide(), 1600);
+    } catch {
+      sb.show("⚠️ Save failed", { priority: 10 });
+    }
+  }
+
+  return <button onClick={onClick}>Save</button>;
+}`;
+---
+
+<Layout title="react-status-bar — imperative API">
+	<PageStatus label="Viewing: imperative" client:load />
+
+	<header class="page__head">
+		<h1 class="page__title">Imperative API</h1>
+		<p class="page__lead">
+			<code>useStatusBar()</code> returns <code>show()</code> and <code>hide()</code>
+			for event handlers and async flows. <code>show</code> is an idempotent upsert —
+			the entry auto-removes when the component unmounts.
+		</p>
+	</header>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Async save flow (assertive on error)</CardTitle></CardHeader>
+		<CardBody>
+			<ImperativeDemo client:visible />
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+</Layout>

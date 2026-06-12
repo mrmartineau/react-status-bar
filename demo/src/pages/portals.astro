@@ -1,0 +1,44 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import { PortalsDemo } from "../islands/PortalsDemo.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `<div id="window-statusbar" />   {/* fixed shell node */}
+
+<StatusBarViewport
+  portalTarget="#window-statusbar"
+  mode="stack"
+/>
+
+{/* declared here, rendered into the node above */}
+<StatusBar priority={2}>● online</StatusBar>`;
+---
+
+<Layout title="react-status-bar — portals">
+	<PageStatus label="Viewing: portals" client:load />
+
+	<header class="page__head">
+		<h1 class="page__title">Portals</h1>
+		<p class="page__lead">
+			A viewport can render <em>inline</em> or portal its output into a fixed shell
+			node anywhere in the DOM. The producers stay where they are in the tree; only
+			the rendered bar moves. (The bottom-of-screen global bar on every page is
+			itself a portal.)
+		</p>
+	</header>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Portal into a window footer</CardTitle></CardHeader>
+		<CardBody>
+			<p>
+				This mock window owns a footer node with <code>id="window-statusbar"</code>.
+				The viewport targets it by selector — the producers live in this card, but
+				their output appears down in the window chrome.
+			</p>
+			<PortalsDemo client:visible />
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+</Layout>

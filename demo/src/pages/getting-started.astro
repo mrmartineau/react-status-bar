@@ -1,0 +1,144 @@
+---
+import CodeBlock from "../components/CodeBlock.astro";
+import { Install } from "../islands/Install.tsx";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const mountSnippet = `// AppShell.tsx
+import { StatusBarProvider, StatusBarViewport } from "react-status-bar";
+
+export function AppShell({ children }: { children: React.ReactNode }) {
+  return (
+    <StatusBarProvider>
+      <div className="app-layout">
+        {/* A fixed shell node in your chrome */}
+        <div id="statusbar-global" className="statusbar-shell" />
+
+        <StatusBarViewport
+          portalTarget="#statusbar-global"
+          mode="stack"
+          separator="•"
+        />
+
+        {children}
+      </div>
+    </StatusBarProvider>
+  );
+}`;
+
+const contributeSnippet = `import { StatusBar } from "react-status-bar";
+
+function Editor() {
+  return (
+    <>
+      <StatusBar priority={2}>Autosaving…</StatusBar>
+      <StatusBar priority={5}>Preview mode</StatusBar>
+    </>
+  );
+}`;
+
+const imperativeSnippet = `import { useStatusBar } from "react-status-bar";
+
+function SaveButton() {
+  const sb = useStatusBar();
+  async function onClick() {
+    sb.show("Saving…");
+    try {
+      await save();
+      sb.show("Saved", { priority: 4 });   // same entry, updated
+      setTimeout(() => sb.hide(), 1500);
+    } catch {
+      sb.show("⚠️ Save failed", { priority: 10 });
+    }
+  }
+  return <button onClick={onClick}>Save</button>;
+}`;
+
+const scopesSnippet = `<StatusBarViewport scope="global" portalTarget="#statusbar-global" />
+<StatusBarViewport scope="editor" portalTarget="#statusbar-editor" mode="stack" />
+
+// deep in the editor tree
+<StatusBar scope="editor">Spellcheck enabled</StatusBar>`;
+---
+
+<Layout title="react-status-bar — getting started">
+	<PageStatus label="Viewing: getting started" client:load />
+
+	<header class="page__head">
+		<h1 class="page__title">Getting started</h1>
+		<p class="page__lead">
+			Install the package, wrap your app in a provider, drop a viewport somewhere,
+			and contribute from anywhere in the tree. React 18+ is the only peer
+			dependency.
+		</p>
+	</header>
+
+	<section class="step">
+		<div class="step__head">
+			<span class="step__num">1</span>
+			<h2 class="step__title">Install</h2>
+		</div>
+		<div class="step__body">
+			<p>Add the package with your favourite package manager:</p>
+			<Install client:load />
+			<div class="callout callout--info">
+				<strong class="callout__title">Peer dependencies</strong>
+				<p><code>react</code> and <code>react-dom</code> (18 or newer) must already be installed in your app. Nothing else is bundled.</p>
+			</div>
+		</div>
+	</section>
+
+	<section class="step">
+		<div class="step__head">
+			<span class="step__num">2</span>
+			<h2 class="step__title">Mount the provider + a viewport</h2>
+		</div>
+		<div class="step__body">
+			<p>The provider holds the store. The viewport reads a scope and renders it — give the shell node a <code>min-height</code> so content arriving after hydration causes no layout shift.</p>
+			<CodeBlock code={mountSnippet} lang="tsx" />
+		</div>
+	</section>
+
+	<section class="step">
+		<div class="step__head">
+			<span class="step__num">3</span>
+			<h2 class="step__title">Contribute from anywhere</h2>
+		</div>
+		<div class="step__body">
+			<p>Mount a <code>&lt;StatusBar&gt;</code> anywhere below the provider. It declares <em>what</em> to show and <em>how important</em> it is — the viewport decides presentation. Entries are removed automatically on unmount.</p>
+			<CodeBlock code={contributeSnippet} lang="tsx" />
+		</div>
+	</section>
+
+	<section class="step">
+		<div class="step__head">
+			<span class="step__num">4</span>
+			<h2 class="step__title">Imperative updates (optional)</h2>
+		</div>
+		<div class="step__body">
+			<p>For event handlers and async flows, <code>useStatusBar()</code> returns <code>show()</code> / <code>hide()</code>. <code>show</code> is an idempotent upsert — call it again to update the same entry in place.</p>
+			<CodeBlock code={imperativeSnippet} lang="tsx" />
+		</div>
+	</section>
+
+	<section class="step">
+		<div class="step__head">
+			<span class="step__num">5</span>
+			<h2 class="step__title">Multiple bars with scopes</h2>
+		</div>
+		<div class="step__body">
+			<p>Every component takes a <code>scope</code>. One provider can drive any number of independent bars; a viewport only re-renders when its own scope changes.</p>
+			<CodeBlock code={scopesSnippet} lang="tsx" />
+		</div>
+	</section>
+
+	<div class="callout callout--info">
+		<strong class="callout__title">RSC / Next.js</strong>
+		<p>The package is marked <code>"use client"</code>. Producers and viewports are client components (the store lives in the browser), but they can be rendered anywhere inside a server-rendered tree. The server snapshot is empty, so there is never a hydration mismatch.</p>
+	</div>
+
+	<div class="callout callout--warn">
+		<strong class="callout__title">Testing</strong>
+		<p>Inject a store for isolation: <code>&lt;StatusBarProvider store=&#123;createStatusStore()&#125;&gt;</code>. The store is plain JS — unit-test <code>upsert</code>/<code>remove</code>/sorting without React at all.</p>
+	</div>
+</Layout>
