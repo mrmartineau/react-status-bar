@@ -57,7 +57,7 @@ import { createPortal } from "react-dom";
 export type StatusEntry = {
   id: string;       // unique per producer instance
   scope: string;    // logical bar id (supports many bars)
-  priority: number; // higher sorts first
+  priority: number; // lower = more important (P0 wins); sorts first
   order: number;    // monotonic registration order (recency tiebreak)
   node: React.ReactNode;
 };
@@ -111,8 +111,10 @@ export function createStatusStore() {
       if (!snap) {
         const bucket = scopes.get(scope);
         snap = bucket
-          ? [...bucket.values()].sort(
-              (a, b) => b.priority - a.priority || b.order - a.order
+          ? [...bucket.values()].sort((a, b) =>
+              a.priority !== b.priority
+                ? a.priority - b.priority // lower = more important, sorts first
+                : b.order - a.order
             )
           : EMPTY;
         snapshots.set(scope, snap);
@@ -158,12 +160,12 @@ const useIsoLayoutEffect =
 // ---------- Producer: side-effect component ----------
 export function StatusBar({
   children,
-  priority = 0,
+  priority = Number.POSITIVE_INFINITY,
   scope = "global",
   id: explicitId,
 }: {
   children: React.ReactNode;
-  /** Higher priority sorts first; the top entry wins in "replace" mode. */
+  /** Lower is more important (P0 wins); lowest-numbered entry wins in "replace" mode. Unset → lowest, rendered last. */
   priority?: number;
   /** Logical bar to target. */
   scope?: string;
@@ -295,7 +297,7 @@ export function useStatusBar({
     () => ({
       /** Idempotent: calling show() again updates the same entry in place. */
       show(node: React.ReactNode, opts?: { priority?: number }) {
-        store.upsert({ id, scope, priority: opts?.priority ?? 0, node });
+        store.upsert({ id, scope, priority: opts?.priority ?? Number.POSITIVE_INFINITY, node });
       },
       hide() {
         store.remove(scope, id);
@@ -352,18 +354,18 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 function Editor() {
   return (
     <>
-      <StatusBar priority={2}>Autosaving…</StatusBar>
-      <StatusBar priority={5}>Preview mode</StatusBar>
+      <StatusBar priority={3}>Autosaving…</StatusBar>
+      <StatusBar priority={1}>Preview mode</StatusBar>
     </>
   );
 }
 
 function CommentsPanel() {
-  return <StatusBar priority={3}><strong>3 unresolved comments</strong></StatusBar>;
+  return <StatusBar priority={2}><strong>3 unresolved comments</strong></StatusBar>;
 }
 ```
 
-With `mode="stack"` on the viewport, all three render together, sorted by priority then recency:
+With `mode="stack"` on the viewport, all three render together, sorted by priority (lower = more important) then recency:
 
 ```
 Preview mode • 3 unresolved comments • Autosaving…
@@ -414,7 +416,7 @@ function SaveButton() {
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `children` | `ReactNode` | — | Content to contribute. |
-| `priority` | `number` | `0` | Higher sorts first; top entry wins in `replace` mode. |
+| `priority` | `number` | lowest | Lower = more important (P0 > P1 > P5); lowest-numbered entry wins in `replace` mode. Unset → lowest, rendered last. |
 | `scope` | `string` | `"global"` | Target bar. Changing it migrates the entry correctly. |
 | `id` | `string` | auto | Stable identity across remounts (e.g. route transitions). |
 
@@ -486,7 +488,7 @@ Entries register in effects, so the server and the hydration pass both render an
 A: Yes. With `mode="stack"` the viewport renders all of them, sorted by priority then recency.
 
 **Q: What if I want only one item?**
-A: `mode="replace"` (the default). Highest priority wins; ties go to the most recently registered.
+A: `mode="replace"` (the default). The most important entry wins — the lowest `priority` number (P0 beats P5); ties go to the most recently registered.
 
 **Q: Why can't a producer set the merge mode anymore?**
 A: In v1, the highest-priority entry's mode silently controlled the whole bar — mounting one component could change how everything else rendered. Presentation belongs to the surface that renders it.
@@ -510,5 +512,6 @@ A: No. Producers write to the store but never subscribe to it, so updates only r
 
 ## Changelog
 
+- **v2.1.0** (breaking): `priority` is now **lowest-wins** (incident-style: P0 > P1 > P5). Lower numbers sort first and win in `replace` mode; the default is the lowest priority (`Number.POSITIVE_INFINITY`), so unset entries render last. Previously higher numbers sorted first.
 - **v2.0.0**: Rewrite. External store + `useSyncExternalStore` (per-scope subscriptions, no tree-wide re-renders). Merge mode moved to the viewport. Fixed: stale entries on scope/id change, duplicate entries from `show()`, leaked hook entries on unmount, unmounting `aria-live` region, index-based keys in stacked mode. Idempotent `show()` replaces `show`/`update`. Injectable store for tests. Honest SSR story.
 - **v1.0.0**: Initial portal-based release (Option B).

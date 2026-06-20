@@ -9,17 +9,17 @@ Built on an external store + `useSyncExternalStore`, so a status change re-rende
   <StatusBarViewport mode="stack" separator="•" />
 
   {/* ...anywhere deeper in the tree... */}
-  <StatusBar priority={5}>Preview mode</StatusBar>
+  <StatusBar priority={1}>Preview mode</StatusBar>
   <StatusBar priority={2}>Autosaving…</StatusBar>
 </StatusBarProvider>
-// → "Preview mode • Autosaving…"
+// → "Preview mode • Autosaving…"  (lower priority is more important, like P0 > P1)
 ```
 
 ## Features
 
 - **Side-effect component API** — `<StatusBar>…</StatusBar>` registers content while mounted, removes it on unmount.
 - **Portaled rendering** — `<StatusBarViewport portalTarget>` mounts output anywhere in the DOM.
-- **Multiple producers** — any number of components contribute; entries sort by priority, then recency.
+- **Multiple producers** — any number of components contribute; entries sort by priority (lower = more important), then recency.
 - **Viewport-owned presentation** — `mode="replace"` (show the winner) or `mode="stack"` (show all).
 - **Scopes** — independent bars (`global`, `editor`, `modal-42`) from one provider.
 - **Surgical re-renders** — status changes re-render only the subscribed viewport, not the tree.
@@ -59,6 +59,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 }
 ```
 
+> `portalTarget` is optional — omit it and the viewport renders **inline** wherever you place it (portals just let you mount the output into a fixed shell node). The bar ships **unstyled** so it inherits your design; drop in the minimal CSS from [Styling](#styling) to get started.
+
 ### 2. Contribute from anywhere
 
 ```tsx
@@ -68,13 +70,13 @@ function Editor() {
   return (
     <>
       <StatusBar priority={2}>Autosaving…</StatusBar>
-      <StatusBar priority={5}>Preview mode</StatusBar>
+      <StatusBar priority={1}>Preview mode</StatusBar>
     </>
   );
 }
 ```
 
-With `mode="stack"` the viewport renders all entries sorted by priority then recency. With `mode="replace"` only the highest-priority entry shows — producers don't change.
+With `mode="stack"` the viewport renders all entries sorted by priority (lower = more important) then recency. With `mode="replace"` only the most important — lowest-numbered — entry shows; producers don't change.
 
 ### 3. Multiple scopes (independent bars)
 
@@ -93,13 +95,13 @@ import { useStatusBar } from "@mrmartineau/react-status-bar";
 function SaveButton() {
   const sb = useStatusBar();
   async function onClick() {
-    sb.show("Saving…");
+    sb.show("Saving…", { priority: 5 });
     try {
       await save();
-      sb.show("Saved", { priority: 4 }); // same entry, updated in place
+      sb.show("Saved", { priority: 3 }); // same entry, updated in place
       setTimeout(() => sb.hide(), 1500);
     } catch {
-      sb.show("⚠️ Save failed", { priority: 10 });
+      sb.show("⚠️ Save failed", { priority: 0 }); // most important — escalate to P0
     }
   }
   return <button onClick={onClick}>Save</button>;
@@ -122,7 +124,7 @@ function SaveButton() {
 | Prop | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `children` | `ReactNode` | — | Content to contribute. |
-| `priority` | `number` | `0` | Higher sorts first; top entry wins in `replace` mode. |
+| `priority` | `number` | lowest | Lower = more important (incident-style: P0 > P1 > P5); lowest-numbered entry wins in `replace` mode. Unset → lowest priority, rendered last. |
 | `scope` | `string` | `"global"` | Target bar. Changing it migrates the entry correctly. |
 | `id` | `string` | auto | Stable identity across remounts. |
 
@@ -141,7 +143,7 @@ function SaveButton() {
 
 ### `useStatusBar({ scope? })`
 
-Returns `{ show(node, { priority? }), hide() }`. `show` is an idempotent upsert; the entry auto-removes on unmount.
+Returns `{ show(node, { priority? }), hide() }`. `show` is an idempotent upsert (`priority` is lowest-wins, like the `<StatusBar>` prop); the entry auto-removes on unmount.
 
 ### `createStatusStore()`
 

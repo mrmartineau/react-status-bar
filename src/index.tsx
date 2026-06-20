@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 export type StatusEntry = {
 	id: string; // unique per producer instance
 	scope: string; // logical bar id (supports many bars)
-	priority: number; // higher sorts first
+	priority: number; // lower = more important (P0 wins); sorts first
 	order: number; // monotonic registration order (recency tiebreak)
 	node: React.ReactNode;
 };
@@ -68,7 +68,10 @@ export function createStatusStore() {
 				const bucket = scopes.get(scope);
 				snap = bucket
 					? [...bucket.values()].sort(
-							(a, b) => b.priority - a.priority || b.order - a.order,
+							(a, b) =>
+								a.priority !== b.priority
+									? a.priority - b.priority // lower number = more important, sorts first
+									: b.order - a.order, // tie: most recently registered wins
 						)
 					: EMPTY;
 				snapshots.set(scope, snap);
@@ -116,12 +119,16 @@ const useIsoLayoutEffect =
 // ---------- Producer: side-effect component ----------
 export function StatusBar({
 	children,
-	priority = 0,
+	priority = Number.POSITIVE_INFINITY,
 	scope = "global",
 	id: explicitId,
 }: {
 	children: React.ReactNode;
-	/** Higher priority sorts first; the top entry wins in "replace" mode. */
+	/**
+	 * Lower is more important (incident-style: P0 > P1 > P5); the lowest-numbered
+	 * entry wins in "replace" mode. Defaults to lowest priority, so an unset
+	 * entry is rendered last.
+	 */
 	priority?: number;
 	/** Logical bar to target. */
 	scope?: string;
@@ -250,9 +257,17 @@ export function useStatusBar({ scope = "global" }: { scope?: string } = {}) {
 
 	return React.useMemo(
 		() => ({
-			/** Idempotent: calling show() again updates the same entry in place. */
+			/**
+			 * Idempotent: calling show() again updates the same entry in place.
+			 * `priority` is lowest-wins (P0 = most important); defaults to lowest.
+			 */
 			show(node: React.ReactNode, opts?: { priority?: number }) {
-				store.upsert({ id, scope, priority: opts?.priority ?? 0, node });
+				store.upsert({
+					id,
+					scope,
+					priority: opts?.priority ?? Number.POSITIVE_INFINITY,
+					node,
+				});
 			},
 			hide() {
 				store.remove(scope, id);

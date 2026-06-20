@@ -42,15 +42,52 @@ describe("createStatusStore", () => {
 		expect(orderA2).toBe(orderA as number);
 	});
 
-	test("sorts by priority desc, then by recency desc", () => {
+	test("sorts by priority asc (lower = more important), then recency desc", () => {
 		const store = createStatusStore();
-		store.upsert({ id: "low", scope: "global", priority: 1, node: "low" });
-		store.upsert({ id: "high", scope: "global", priority: 5, node: "high" });
+		store.upsert({ id: "top", scope: "global", priority: 1, node: "top" });
+		store.upsert({ id: "least", scope: "global", priority: 5, node: "least" });
 		store.upsert({ id: "mid1", scope: "global", priority: 3, node: "mid1" });
 		store.upsert({ id: "mid2", scope: "global", priority: 3, node: "mid2" });
 		const ids = store.getSnapshot("global").map((e) => e.id);
-		// high(5) first, then the two priority-3 entries newest-first, then low(1)
-		expect(ids).toEqual(["high", "mid2", "mid1", "low"]);
+		// top(1) first, then the two priority-3 entries newest-first, then least(5)
+		expect(ids).toEqual(["top", "mid2", "mid1", "least"]);
+	});
+
+	test("unset priority defaults to lowest (rendered last)", () => {
+		const store = createStatusStore();
+		store.upsert({ id: "explicit", scope: "global", priority: 1, node: "x" });
+		// Mirror the component/hook default: omitted priority → lowest.
+		store.upsert({
+			id: "unset",
+			scope: "global",
+			priority: Number.POSITIVE_INFINITY,
+			node: "y",
+		});
+		expect(store.getSnapshot("global").map((e) => e.id)).toEqual([
+			"explicit",
+			"unset",
+		]);
+	});
+
+	test("two unset (lowest) priorities fall back to recency", () => {
+		const store = createStatusStore();
+		store.upsert({
+			id: "older",
+			scope: "global",
+			priority: Number.POSITIVE_INFINITY,
+			node: "o",
+		});
+		store.upsert({
+			id: "newer",
+			scope: "global",
+			priority: Number.POSITIVE_INFINITY,
+			node: "n",
+		});
+		// No NaN from Infinity - Infinity: comparator falls through to recency.
+		expect(store.getSnapshot("global").map((e) => e.id)).toEqual([
+			"newer",
+			"older",
+		]);
 	});
 
 	test("getSnapshot is referentially stable between changes", () => {
@@ -105,29 +142,29 @@ describe("StatusBar + StatusBarViewport", () => {
 		expect(getByRole("status").textContent).toContain("Hello bar");
 	});
 
-	test("replace mode shows only the highest-priority entry", () => {
+	test("replace mode shows only the most important (lowest-numbered) entry", () => {
 		const { getByRole } = render(
 			<StatusBarProvider>
 				<StatusBarViewport mode="replace" />
-				<StatusBar priority={1}>Low</StatusBar>
-				<StatusBar priority={5}>High</StatusBar>
+				<StatusBar priority={0}>Critical</StatusBar>
+				<StatusBar priority={5}>Minor</StatusBar>
 			</StatusBarProvider>,
 		);
 		const text = getByRole("status").textContent ?? "";
-		expect(text).toContain("High");
-		expect(text).not.toContain("Low");
+		expect(text).toContain("Critical");
+		expect(text).not.toContain("Minor");
 	});
 
-	test("stack mode shows all entries sorted by priority", () => {
+	test("stack mode shows all entries, most important (lowest) first", () => {
 		const { getByRole } = render(
 			<StatusBarProvider>
 				<StatusBarViewport mode="stack" separator=" | " />
-				<StatusBar priority={1}>Low</StatusBar>
-				<StatusBar priority={5}>High</StatusBar>
+				<StatusBar priority={0}>Critical</StatusBar>
+				<StatusBar priority={5}>Minor</StatusBar>
 			</StatusBarProvider>,
 		);
 		const text = getByRole("status").textContent ?? "";
-		expect(text.indexOf("High")).toBeLessThan(text.indexOf("Low"));
+		expect(text.indexOf("Critical")).toBeLessThan(text.indexOf("Minor"));
 	});
 
 	test("entries are removed when the producer unmounts", () => {
