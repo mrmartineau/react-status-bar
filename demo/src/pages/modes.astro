@@ -9,32 +9,29 @@ const snippet = `const [mode, setMode] = useState("stack")
 
 <StatusBarViewport mode={mode} separator="•" />
 
-<StatusBar priority={5}>🔴 Recording</StatusBar>
-<StatusBar priority={3}>2 warnings</StatusBar>
-<StatusBar priority={1}>Ln 42, Col 8</StatusBar>`;
+<StatusBar priority={1}>🔴 Recording</StatusBar>
+<StatusBar priority={2}>2 warnings</StatusBar>
+<StatusBar priority={3}>Ln 42, Col 8</StatusBar>`;
 ---
 
-<Layout title="React Status Bar — replace vs stack">
+<Layout title="Replace vs Stack">
 	<PageStatus label="Viewing: modes" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">Replace vs Stack</h1>
-		<p class="page__lead">
-			Presentation is a <em>viewport</em> concern, not a producer one. The exact
-			same three producers render differently depending on the viewport's
-			<code>mode</code>. Flip it and watch.
-		</p>
-	</header>
+	<p class="page__lead">
+		Presentation is a <em>viewport</em> concern, not a producer one. The exact
+		same three producers render differently depending on the viewport's
+		<code>mode</code>. Flip it and watch.
+	</p>
 
 	<Card class="card">
 		<CardHeader><CardTitle>Same producers, two presentations</CardTitle></CardHeader>
 		<CardBody>
 			<ModesDemo client:visible />
 			<p>
-				<strong>replace</strong> shows only the highest-priority entry —
-				<code>🔴 Recording</code> (priority 5). <strong>stack</strong> shows all
-				three, sorted by priority then recency. The producers are identical in
-				both cases.
+				<strong>replace</strong> shows only the most important entry — the
+				lowest number, <code>🔴 Recording</code> (priority 1). <strong>stack</strong>
+				shows all three, sorted by priority (lower = more important) then recency.
+				The producers are identical in both cases.
 			</p>
 			<CodeBlock code={snippet} lang="tsx" />
 		</CardBody>

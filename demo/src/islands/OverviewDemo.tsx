@@ -21,11 +21,11 @@ export function OverviewDemo() {
 				</div>
 			</div>
 
-			<StatusBar priority={5}>Preview mode</StatusBar>
-			<StatusBar priority={3}>
+			<StatusBar priority={1}>Preview mode</StatusBar>
+			<StatusBar priority={2}>
 				<strong>3 unresolved comments</strong>
 			</StatusBar>
-			<StatusBar priority={2}>Autosaving…</StatusBar>
+			<StatusBar priority={3}>Autosaving…</StatusBar>
 		</StatusBarProvider>
 	);
 }

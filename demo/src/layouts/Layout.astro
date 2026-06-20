@@ -1,35 +1,30 @@
 ---
-import "@mrmartineau/zui/css";
+import { DocsLayout } from "@mrmartineau/zui-theme/astro";
 import "@phosphor-icons/web/regular";
 import "../styles/global.css";
-import Sidebar from "../components/Sidebar.astro";
 import { GlobalStatusBar } from "../islands/GlobalStatusBar.tsx";
+import { sections, site } from "../site.config";
 
 interface Props {
-	title: string;
+	title?: string;
+	description?: string;
 }
-const { title } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="React Status Bar — a portal-based status bar system for React" />
-		<title>{title}</title>
-	</head>
-	<body>
-		<div class="app">
-			<Sidebar />
-			<main class="main">
-				<slot />
-			</main>
-		</div>
+<DocsLayout
+	title={title}
+	description={description}
+	currentPath={Astro.url.pathname}
+	site={site}
+	sections={sections}
+>
+	<slot />
 
-		{/* Fixed global bar node — always in the DOM so its aria-live region is
-		    stable. The GlobalStatusBar island portals its viewport in here. */}
+	{/* Fixed global bar node — always in the DOM so its aria-live region is
+	    stable. The GlobalStatusBar island portals its viewport in here. */}
+	<Fragment slot="body-end">
 		<div id="statusbar-global" class="statusbar-shell"></div>
 		<GlobalStatusBar client:load />
-	</body>
-</html>
+	</Fragment>
+</DocsLayout>

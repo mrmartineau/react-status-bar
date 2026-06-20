@@ -7,6 +7,7 @@
       "dependencies": {
         "@astrojs/react": "^5.0.0",
         "@mrmartineau/zui": "^1.2.0",
+        "@mrmartineau/zui-theme": "^1.0.0",
         "@phosphor-icons/react": "^2",
         "@phosphor-icons/web": "^2",
         "astro": "^6.0.0",
@@ -213,6 +214,8 @@
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@mrmartineau/zui": ["@mrmartineau/zui@1.2.0", "", { "dependencies": { "cva": "1.0.0-beta.4" }, "peerDependencies": { "react": "^18.0.0 || ^19.0.0", "solid-js": "^1.7.0", "svelte": "^5.0.0", "vue": "^3.3.0" }, "optionalPeers": ["react", "solid-js", "svelte", "vue"], "bin": { "zui": "scripts/init.mjs" } }, "sha512-xpw+ZYOS3SRCWqFuDKdmcf1Is6b9Aj9Q/KSYBIXGytigjI0PLzJlOX+7cPa87dlLQopM3QlUiG7yE2v8Y0Ds1A=="],
+
+    "@mrmartineau/zui-theme": ["@mrmartineau/zui-theme@1.0.0", "", { "peerDependencies": { "@mrmartineau/zui": "^1.0.0", "astro": "^6.0.0" }, "bin": { "create-zui-docs": "scripts/create.mjs" } }, "sha512-6SU2I8CVqZlHWyv7clSey5D7LjpWV4IbMZa+9kiCiCzo5GCzWF6N3ooCb73WqW3PW2VJpvQSaO95Oa3D5Suv/A=="],
 
     "@oslojs/encoding": ["@oslojs/encoding@1.1.0", "", {}, "sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ=="],
 

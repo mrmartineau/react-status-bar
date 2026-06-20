@@ -17,10 +17,10 @@ const quickStart = `import { StatusBarProvider, StatusBarViewport, StatusBar } f
 <StatusBarProvider>
   <StatusBarViewport mode="stack" separator="•" />
 
-  {/* …anywhere deeper in the tree… */}
-  <StatusBar priority={5}>Preview mode</StatusBar>
-  <StatusBar priority={3}>3 unresolved comments</StatusBar>
-  <StatusBar priority={2}>Autosaving…</StatusBar>
+  {/* …anywhere deeper in the tree (lower priority = more important) … */}
+  <StatusBar priority={1}>Preview mode</StatusBar>
+  <StatusBar priority={2}>3 unresolved comments</StatusBar>
+  <StatusBar priority={3}>Autosaving…</StatusBar>
 </StatusBarProvider>
 // → "Preview mode • 3 unresolved comments • Autosaving…"`;
 
@@ -58,7 +58,7 @@ const features = [
 ];
 ---
 
-<Layout title="React Status Bar — overview">
+<Layout>
 	<PageStatus label="👋 Overview" client:load />
 
 	<header class="hero">
@@ -84,8 +84,9 @@ const features = [
 		<CardBody>
 			<p>
 				The three producers below all target one scope. The viewport sorts by
-				priority then recency and renders them. The bar pinned to the bottom of
-				the window is another viewport — this page is pushing into it right now.
+				priority (lower = more important) then recency and renders them. The bar
+				pinned to the bottom of the window is another viewport — this page is
+				pushing into it right now.
 			</p>
 			<OverviewDemo client:visible />
 			<CodeBlock code={quickStart} lang="tsx" />

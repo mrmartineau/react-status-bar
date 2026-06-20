@@ -30,7 +30,7 @@ store.getSnapshot(scope);                     // StatusEntry[] (stable until cha
 const types = `type StatusEntry = {
   id: string;        // unique per producer instance
   scope: string;     // logical bar id
-  priority: number;  // higher sorts first
+  priority: number;  // lower = more important (P0 wins); sorts first
   order: number;     // monotonic registration order (recency tiebreak)
   node: React.ReactNode;
 };
@@ -54,8 +54,9 @@ const barRows = [
 	{
 		name: "priority",
 		type: "number",
-		default: "0",
-		notes: "Higher sorts first; top entry wins in replace mode.",
+		default: "lowest",
+		notes:
+			"Lower is more important (P0 &gt; P1 &gt; P5); lowest-numbered entry wins in replace mode. Unset &rarr; lowest, rendered last.",
 	},
 	{
 		name: "scope",
@@ -117,16 +118,13 @@ const viewportRows = [
 ];
 ---
 
-<Layout title="react-status-bar — API reference">
+<Layout title="API reference">
 	<PageStatus label="Viewing: API reference" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">API reference</h1>
-		<p class="page__lead">
-			Five exports: a provider, a producer, a viewport, an imperative hook, and the
-			underlying store factory. Everything is fully typed.
-		</p>
-	</header>
+	<p class="page__lead">
+		Five exports: a provider, a producer, a viewport, an imperative hook, and the
+		underlying store factory. Everything is fully typed.
+	</p>
 
 	<Card class="card">
 		<CardHeader><CardTitle>Exports</CardTitle></CardHeader>

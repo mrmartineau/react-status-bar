@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@astrojs/react": "^5.0.0",
 		"@mrmartineau/zui": "^1.2.0",
+		"@mrmartineau/zui-theme": "^1.0.0",
 		"@phosphor-icons/react": "^2",
 		"@phosphor-icons/web": "^2",
 		"astro": "^6.0.0",

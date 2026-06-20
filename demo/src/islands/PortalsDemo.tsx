@@ -1,10 +1,10 @@
-import { Badge, Button } from "@mrmartineau/zui/react";
-import { useState } from "react";
 import {
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
 } from "@mrmartineau/react-status-bar";
+import { Badge, Button } from "@mrmartineau/zui/react";
+import { useState } from "react";
 
 export function PortalsDemo() {
 	const [connected, setConnected] = useState(true);
@@ -63,7 +63,7 @@ export function PortalsDemo() {
 					</Badge>
 				)}
 			</StatusBar>
-			{syncing && <StatusBar priority={5}>⟳ syncing changes</StatusBar>}
+			{syncing && <StatusBar priority={1}>⟳ syncing changes</StatusBar>}
 		</StatusBarProvider>
 	);
 }

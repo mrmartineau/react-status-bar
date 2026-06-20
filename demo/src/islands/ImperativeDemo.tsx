@@ -1,10 +1,10 @@
-import { Badge, Button, Textarea } from "@mrmartineau/zui/react";
-import { useState } from "react";
 import {
 	StatusBarProvider,
 	StatusBarViewport,
 	useStatusBar,
 } from "@mrmartineau/react-status-bar";
+import { Badge, Button, Textarea } from "@mrmartineau/zui/react";
+import { useState } from "react";
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -14,21 +14,22 @@ function SaveDemo() {
 
 	async function run(fail: boolean) {
 		setBusy(true);
-		sb.show("💾 Saving…", { priority: 2 });
+		sb.show("💾 Saving…", { priority: 5 });
 		await wait(1100);
 		if (fail) {
+			// Escalate to P0 — most important.
 			sb.show(
 				<Badge variant="fill" color="red">
 					⚠️ Save failed — retry?
 				</Badge>,
-				{ priority: 10 },
+				{ priority: 0 },
 			);
 		} else {
 			sb.show(
 				<Badge variant="fill" color="green">
 					✓ Saved
 				</Badge>,
-				{ priority: 4 },
+				{ priority: 3 },
 			);
 			await wait(1600);
 			sb.hide();
@@ -73,7 +74,8 @@ function CharCounter() {
 				const v = e.target.value;
 				setText(v);
 				// Idempotent upsert: one entry, updated in place on every keystroke.
-				if (v) sb.show(`✍️ ${v.length} characters`, { priority: 1 });
+				// No priority → lowest, so a save in progress takes precedence.
+				if (v) sb.show(`✍️ ${v.length} characters`);
 				else sb.hide();
 			}}
 		/>

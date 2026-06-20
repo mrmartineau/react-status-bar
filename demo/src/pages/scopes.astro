@@ -12,18 +12,15 @@ const snippet = `<StatusBarViewport scope="editor" mode="stack" />
 <StatusBar scope="notifications">🔔 2 unread notifications</StatusBar>`;
 ---
 
-<Layout title="React Status Bar — scopes">
+<Layout title="Scopes">
 	<PageStatus label="Viewing: scopes" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">Scopes</h1>
-		<p class="page__lead">
-			One provider can drive any number of <em>independent</em> bars. Each viewport
-			reads a single <code>scope</code> and re-renders only when that scope changes.
-			Below: an <code>editor</code> bar and a <code>notifications</code> bar, fed by
-			separate producers.
-		</p>
-	</header>
+	<p class="page__lead">
+		One provider can drive any number of <em>independent</em> bars. Each viewport
+		reads a single <code>scope</code> and re-renders only when that scope changes.
+		Below: an <code>editor</code> bar and a <code>notifications</code> bar, fed by
+		separate producers.
+	</p>
 
 	<Card class="card">
 		<CardHeader><CardTitle>Two scopes, one provider</CardTitle></CardHeader>

@@ -31,8 +31,8 @@ const contributeSnippet = `import { StatusBar } from "@mrmartineau/react-status-
 function Editor() {
   return (
     <>
-      <StatusBar priority={2}>Autosaving…</StatusBar>
-      <StatusBar priority={5}>Preview mode</StatusBar>
+      <StatusBar priority={3}>Autosaving…</StatusBar>
+      <StatusBar priority={1}>Preview mode</StatusBar>
     </>
   );
 }`;
@@ -42,13 +42,13 @@ const imperativeSnippet = `import { useStatusBar } from "@mrmartineau/react-stat
 function SaveButton() {
   const sb = useStatusBar();
   async function onClick() {
-    sb.show("Saving…");
+    sb.show("Saving…", { priority: 5 });
     try {
       await save();
-      sb.show("Saved", { priority: 4 });   // same entry, updated
+      sb.show("Saved", { priority: 3 });   // same entry, updated
       setTimeout(() => sb.hide(), 1500);
     } catch {
-      sb.show("⚠️ Save failed", { priority: 10 });
+      sb.show("⚠️ Save failed", { priority: 0 });   // escalate to P0
     }
   }
   return <button onClick={onClick}>Save</button>;
@@ -61,17 +61,14 @@ const scopesSnippet = `<StatusBarViewport scope="global" portalTarget="#statusba
 <StatusBar scope="editor">Spellcheck enabled</StatusBar>`;
 ---
 
-<Layout title="React Status Bar — getting started">
+<Layout title="Getting started">
 	<PageStatus label="Viewing: getting started" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">Getting started</h1>
-		<p class="page__lead">
-			Install the package, wrap your app in a provider, drop a viewport somewhere,
-			and contribute from anywhere in the tree. React 18+ is the only peer
-			dependency.
-		</p>
-	</header>
+	<p class="page__lead">
+		Install the package, wrap your app in a provider, drop a viewport somewhere,
+		and contribute from anywhere in the tree. React 18+ is the only peer
+		dependency.
+	</p>
 
 	<section class="step">
 		<div class="step__head">

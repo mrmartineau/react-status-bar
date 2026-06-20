@@ -22,8 +22,9 @@ export function GlobalStatusBar() {
 					<span className="statusbar-shell__idle">idle — no global status</span>
 				}
 			/>
-			{/* Baseline entry so the bar is never empty. */}
-			<StatusBar priority={-10}>@mrmartineau/react-status-bar</StatusBar>
+			{/* Baseline entry so the bar is never empty. No priority → lowest, so
+			    it always sits last, behind any page label. */}
+			<StatusBar>@mrmartineau/react-status-bar</StatusBar>
 		</StatusBarProvider>
 	);
 }

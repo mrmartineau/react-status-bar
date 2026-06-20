@@ -1,18 +1,19 @@
-import { Button, Input, Label } from "@mrmartineau/zui/react";
-import { type FormEvent, useRef, useState } from "react";
 import {
 	StatusBar,
 	type StatusBarMode,
 	StatusBarProvider,
 	StatusBarViewport,
 } from "@mrmartineau/react-status-bar";
+import { Button, Input, Label } from "@mrmartineau/zui/react";
+import { type FormEvent, useRef, useState } from "react";
 
 type Item = { id: string; text: string; priority: number };
 
+// Lower priority = more important, so these render most-important first.
 const INITIAL: Item[] = [
-	{ id: "seed-1", text: "Build passing", priority: 4 },
+	{ id: "seed-1", text: "Build passing", priority: 1 },
 	{ id: "seed-2", text: "Branch: main", priority: 2 },
-	{ id: "seed-3", text: "2 TODOs", priority: 1 },
+	{ id: "seed-3", text: "2 TODOs", priority: 3 },
 ];
 
 export function PlaygroundDemo() {
@@ -91,7 +92,7 @@ export function PlaygroundDemo() {
 					/>
 				</div>
 				<div className="field">
-					<Label htmlFor="pg-priority">priority</Label>
+					<Label htmlFor="pg-priority">priority (lower = more important)</Label>
 					<Input
 						id="pg-priority"
 						className="input-num"

@@ -1,10 +1,11 @@
 /*
- * Demo chrome styles. ZUI (@mrmartineau/zui/css) owns the reset, base layer,
- * design tokens, and component styling. Static chrome uses ZUI Astro
- * components; interactive parts are React islands using ZUI React components.
- * Every colour / radius / space here is sourced from a ZUI token. Local aliases
- * bridge old names onto ZUI's semantic tokens so the demo follows the active
- * light/dark colour scheme (toggled via :root.zui-dark / :root.zui-light).
+ * Demo content styles. The @mrmartineau/zui-theme DocsLayout owns the page
+ * chrome (header, sidebar, table of contents, footer, theme switchers); ZUI
+ * (@mrmartineau/zui/css) owns the reset, base layer, design tokens, and
+ * component styling. What's left here is page-content styling only. Every
+ * colour / radius / space is sourced from a ZUI token; local aliases bridge old
+ * names onto ZUI's semantic tokens so the demo follows the active light/dark
+ * colour scheme (toggled via :root.zui-dark / :root.zui-light).
  */
 :root {
 	--bg: var(--color-background);
@@ -17,131 +18,12 @@
 	--accent: var(--color-theme);
 	--radius: var(--radius-lg);
 	--mono: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
-	--sidebar-w: 248px;
 	--bar-h: 40px;
 }
 
-/* ---------- Layout ---------- */
-.app {
-	display: grid;
-	grid-template-columns: var(--sidebar-w) 1fr;
-	min-height: 100vh;
-}
-
-.sidebar {
-	position: sticky;
-	top: 0;
-	align-self: start;
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-md);
-	padding: var(--space-md) var(--space-sm);
-	background: var(--bg-2);
-	border-right: var(--border-style) 1px var(--border);
-}
-
-.sidebar__brand {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	padding: var(--space-2xs) var(--space-xs);
-}
-
-.sidebar__logo {
-	display: grid;
-	place-items: center;
-	color: var(--accent);
-	font-size: var(--step-3);
-}
-
-.sidebar__title {
-	display: flex;
-	flex-direction: column;
-	line-height: 1.2;
-}
-
-.sidebar__title small {
-	color: var(--muted);
-	font-size: var(--step--2);
-}
-
-.nav {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-sm);
-}
-
-.nav__group {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-}
-
-.nav__heading {
-	font-size: var(--step--2);
-	letter-spacing: 0.09em;
-	text-transform: uppercase;
-	color: var(--muted);
-	padding: var(--space-2xs) var(--space-xs);
-	opacity: 0.7;
-}
-
-.nav__link {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	padding: var(--space-2xs) var(--space-xs);
-	border-radius: var(--radius-md);
-	color: var(--muted);
-	text-decoration: none;
-	font-size: var(--step--1);
-	transition:
-		background 0.12s ease,
-		color 0.12s ease;
-}
-
-.nav__link .ph {
-	font-size: var(--step-1);
-}
-
-.nav__link:hover {
-	background: var(--panel-2);
-	color: var(--text);
-}
-
-.nav__link--active {
-	background: var(--panel-2);
-	color: var(--text);
-}
-
-.sidebar__foot {
-	margin-top: auto;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-2xs);
-}
-
-.sidebar__gh {
-	display: grid;
-	place-items: center;
-	width: 2rem;
-	height: 2rem;
-	border-radius: var(--radius-md);
-	color: var(--muted);
-	font-size: var(--step-2);
-}
-
-.sidebar__gh:hover {
-	color: var(--text);
-	background: var(--panel-2);
-}
-
-.main {
-	padding: var(--space-xl) clamp(var(--space-md), 4vw, var(--space-2xl));
-	padding-bottom: calc(var(--bar-h) + var(--space-2xl));
-	max-width: 920px;
+/* Reserve room for the fixed global status bar so the theme footer clears it. */
+body {
+	padding-bottom: var(--bar-h);
 }
 
 /* ---------- Page ---------- */
@@ -610,7 +492,7 @@
 /* ---------- Fixed global bar ---------- */
 .statusbar-shell {
 	position: fixed;
-	left: var(--sidebar-w);
+	left: 0;
 	right: 0;
 	bottom: 0;
 	min-height: var(--bar-h);
@@ -635,16 +517,6 @@
 }
 
 @media (max-width: 720px) {
-	.app {
-		grid-template-columns: 1fr;
-	}
-	.sidebar {
-		position: static;
-		height: auto;
-	}
-	.statusbar-shell {
-		left: 0;
-	}
 	.step__body {
 		padding-left: 0;
 	}

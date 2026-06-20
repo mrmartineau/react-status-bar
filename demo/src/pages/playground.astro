@@ -17,17 +17,14 @@ const snippet = `const [items, setItems] = useState(INITIAL)
 // remove from \`items\` → producer unmounts → entry leaves the bar`;
 ---
 
-<Layout title="React Status Bar — playground">
+<Layout title="Playground">
 	<PageStatus label="Viewing: playground" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">Playground</h1>
-		<p class="page__lead">
-			Add and remove entries on the fly. Each row is a real <code>&lt;StatusBar&gt;</code>
-			with a stable <code>id</code> — removing a row unmounts it, and the entry leaves
-			the bar automatically. No manual cleanup.
-		</p>
-	</header>
+	<p class="page__lead">
+		Add and remove entries on the fly. Each row is a real <code>&lt;StatusBar&gt;</code>
+		with a stable <code>id</code> — removing a row unmounts it, and the entry leaves
+		the bar automatically. No manual cleanup.
+	</p>
 
 	<Card class="card">
 		<CardHeader><CardTitle>Live entry editor</CardTitle></CardHeader>

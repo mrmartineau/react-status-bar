@@ -9,13 +9,13 @@ const snippet = `function SaveButton() {
   const sb = useStatusBar();
 
   async function onClick() {
-    sb.show("💾 Saving…", { priority: 2 });
+    sb.show("💾 Saving…", { priority: 5 });
     try {
       await save();
-      sb.show("✓ Saved", { priority: 4 });   // same entry, updated in place
+      sb.show("✓ Saved", { priority: 3 });   // same entry, updated in place
       setTimeout(() => sb.hide(), 1600);
     } catch {
-      sb.show("⚠️ Save failed", { priority: 10 });
+      sb.show("⚠️ Save failed", { priority: 0 });   // escalate to P0
     }
   }
 
@@ -23,17 +23,14 @@ const snippet = `function SaveButton() {
 }`;
 ---
 
-<Layout title="React Status Bar — imperative API">
+<Layout title="Imperative API">
 	<PageStatus label="Viewing: imperative" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">Imperative API</h1>
-		<p class="page__lead">
-			<code>useStatusBar()</code> returns <code>show()</code> and <code>hide()</code>
-			for event handlers and async flows. <code>show</code> is an idempotent upsert —
-			the entry auto-removes when the component unmounts.
-		</p>
-	</header>
+	<p class="page__lead">
+		<code>useStatusBar()</code> returns <code>show()</code> and <code>hide()</code>
+		for event handlers and async flows. <code>show</code> is an idempotent upsert —
+		the entry auto-removes when the component unmounts.
+	</p>
 
 	<Card class="card">
 		<CardHeader><CardTitle>Async save flow (assertive on error)</CardTitle></CardHeader>

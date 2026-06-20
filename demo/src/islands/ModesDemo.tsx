@@ -1,11 +1,11 @@
-import { Button } from "@mrmartineau/zui/react";
-import { useState } from "react";
 import {
 	StatusBar,
 	type StatusBarMode,
 	StatusBarProvider,
 	StatusBarViewport,
 } from "@mrmartineau/react-status-bar";
+import { Button } from "@mrmartineau/zui/react";
+import { useState } from "react";
 
 export function ModesDemo() {
 	const [mode, setMode] = useState<StatusBarMode>("stack");
@@ -38,10 +38,11 @@ export function ModesDemo() {
 				</div>
 			</div>
 
-			{/* Producers never change — only the viewport's mode does. */}
-			<StatusBar priority={5}>🔴 Recording</StatusBar>
-			<StatusBar priority={3}>2 warnings</StatusBar>
-			<StatusBar priority={1}>Ln 42, Col 8</StatusBar>
+			{/* Producers never change — only the viewport's mode does.
+			    Lower priority = more important, so Recording (p1) wins replace. */}
+			<StatusBar priority={1}>🔴 Recording</StatusBar>
+			<StatusBar priority={2}>2 warnings</StatusBar>
+			<StatusBar priority={3}>Ln 42, Col 8</StatusBar>
 		</StatusBarProvider>
 	);
 }

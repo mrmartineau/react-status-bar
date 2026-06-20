@@ -1,10 +1,10 @@
-import { Button } from "@mrmartineau/zui/react";
-import { useState } from "react";
 import {
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
 } from "@mrmartineau/react-status-bar";
+import { Button } from "@mrmartineau/zui/react";
+import { useState } from "react";
 
 export function ScopesDemo() {
 	const [spellcheck, setSpellcheck] = useState(true);
@@ -47,12 +47,12 @@ export function ScopesDemo() {
 				UTF-8
 			</StatusBar>
 			{spellcheck && (
-				<StatusBar scope="editor" priority={3}>
+				<StatusBar scope="editor" priority={1}>
 					Spellcheck enabled
 				</StatusBar>
 			)}
 			{wrap && (
-				<StatusBar scope="editor" priority={1}>
+				<StatusBar scope="editor" priority={3}>
 					Word wrap
 				</StatusBar>
 			)}

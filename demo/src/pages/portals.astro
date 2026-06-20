@@ -16,18 +16,15 @@ const snippet = `<div id="window-statusbar" />   {/* fixed shell node */}
 <StatusBar priority={2}>● online</StatusBar>`;
 ---
 
-<Layout title="React Status Bar — portals">
+<Layout title="Portals">
 	<PageStatus label="Viewing: portals" client:load />
 
-	<header class="page__head">
-		<h1 class="page__title">Portals</h1>
-		<p class="page__lead">
-			A viewport can render <em>inline</em> or portal its output into a fixed shell
-			node anywhere in the DOM. The producers stay where they are in the tree; only
-			the rendered bar moves. (The bottom-of-screen global bar on every page is
-			itself a portal.)
-		</p>
-	</header>
+	<p class="page__lead">
+		A viewport can render <em>inline</em> or portal its output into a fixed shell
+		node anywhere in the DOM. The producers stay where they are in the tree; only
+		the rendered bar moves. (The bottom-of-screen global bar on every page is
+		itself a portal.)
+	</p>
 
 	<Card class="card">
 		<CardHeader><CardTitle>Portal into a window footer</CardTitle></CardHeader>
