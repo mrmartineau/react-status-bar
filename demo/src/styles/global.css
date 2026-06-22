@@ -17,13 +17,17 @@
 	--muted: oklch(from var(--color-text) l c h / 0.66);
 	--accent: var(--color-theme);
 	--radius: var(--radius-lg);
-	--mono: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+	--mono: var(--font-code);
 	--bar-h: 40px;
 }
 
 /* Reserve room for the fixed global status bar so the theme footer clears it. */
 body {
 	padding-bottom: var(--bar-h);
+}
+
+a.site-logo {
+	font-weight: normal !important;
 }
 
 /* ---------- Page ---------- */
@@ -164,6 +168,7 @@ body {
 	padding: var(--space-sm) var(--space-md);
 	overflow-x: auto;
 	font-size: var(--step--1);
+	border-radius: 0;
 }
 
 :root.zui-dark .astro-code,
@@ -210,6 +215,10 @@ body {
 	padding: var(--space-xs) var(--space-sm);
 	font-family: var(--mono);
 	font-size: var(--step--1);
+
+	code {
+		background-color: transparent !important;
+	}
 }
 
 .install__prompt {
