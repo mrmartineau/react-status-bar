@@ -21,6 +21,8 @@ Built on an external store + `useSyncExternalStore`, so a status change re-rende
 - **Portaled rendering** — `<StatusBarViewport portalTarget>` mounts output anywhere in the DOM.
 - **Multiple producers** — any number of components contribute; entries sort by priority (lower = more important), then recency.
 - **Viewport-owned presentation** — `mode="replace"` (show the winner) or `mode="stack"` (show all).
+- **Pinned sides** — `align="start"` / `align="end"` push entries to opposite ends with a fluid gap between, like an editor status bar.
+- **Overflow clipping** — `overflow="clip"` hides the least-important entries one by one when they don't fit, VS-Code style.
 - **Scopes** — independent bars (`global`, `editor`, `modal-42`) from one provider.
 - **Surgical re-renders** — status changes re-render only the subscribed viewport, not the tree.
 - **Accessible** — a single `role="status"` / `aria-live` region stays mounted so screen readers announce reliably.
@@ -87,7 +89,25 @@ With `mode="stack"` the viewport renders all entries sorted by priority (lower =
 <StatusBar scope="editor">Spellcheck enabled</StatusBar>
 ```
 
-### 4. Imperative API
+### 4. Pinned sides & overflow
+
+Give entries an `align` to push them to opposite ends of the bar — `"start"` (default) collects on the left, `"end"` on the right, with a fluid gap between. Turn on `overflow="clip"` and the viewport measures itself and hides the least-important entries one at a time when they don't fit, restoring them as space returns (like VS Code's status bar).
+
+```tsx
+<div id="statusbar" className="statusbar-shell" />
+<StatusBarViewport portalTarget="#statusbar" mode="stack" separator="•" overflow="clip" />
+
+{/* …anywhere deeper… */}
+<StatusBar align="start" priority={0}>main ✓</StatusBar>
+<StatusBar align="start" priority={3}>Spaces: 2</StatusBar>
+<StatusBar align="end" priority={0}>Ln 12, Col 4</StatusBar>
+<StatusBar align="end" priority={4}>Prettier</StatusBar>
+// → [ main ✓  Spaces: 2 ............... Prettier  Ln 12, Col 4 ]
+```
+
+Important entries sit on the outer edges; the lowest-priority entries land nearest the centre and are the first to be clipped when the bar runs out of room. With a single side, the least-important (right-most) entry clips first. `overflow="clip"` needs a flex layout and forces a single line — see [Styling](#styling).
+
+### 5. Imperative API
 
 ```tsx
 import { useStatusBar } from "@mrmartineau/react-status-bar";
@@ -125,6 +145,7 @@ function SaveButton() {
 | --- | --- | --- | --- |
 | `children` | `ReactNode` | — | Content to contribute. |
 | `priority` | `number` | lowest | Lower = more important (incident-style: P0 > P1 > P5); lowest-numbered entry wins in `replace` mode. Unset → lowest priority, rendered last. |
+| `align` | `"start" \| "end"` | `"start"` | Which side to pin to. `start` collects left, `end` right, with a fluid gap between. |
 | `scope` | `string` | `"global"` | Target bar. Changing it migrates the entry correctly. |
 | `id` | `string` | auto | Stable identity across remounts. |
 
@@ -134,6 +155,7 @@ function SaveButton() {
 | --- | --- | --- | --- |
 | `scope` | `string` | `"global"` | Which scope to read. |
 | `mode` | `"replace" \| "stack"` | `"replace"` | Presentation is owned here, not by producers. |
+| `overflow` | `"visible" \| "clip"` | `"visible"` | `clip` measures the bar and hides the least-important entries one by one until the rest fit on one line. Adds `statusbar--clip` + `data-clipped`. Needs a flex layout. |
 | `empty` | `ReactNode` | `null` | Rendered inside the always-mounted live region when idle. |
 | `separator` | `ReactNode` | — | Between items in `stack` mode. Marked `aria-hidden`. |
 | `portalTarget` | `HTMLElement \| string \| null` | — | Renders inline if omitted; warns in dev if a selector matches nothing. |
@@ -143,7 +165,7 @@ function SaveButton() {
 
 ### `useStatusBar({ scope? })`
 
-Returns `{ show(node, { priority? }), hide() }`. `show` is an idempotent upsert (`priority` is lowest-wins, like the `<StatusBar>` prop); the entry auto-removes on unmount.
+Returns `{ show(node, { priority?, align? }), hide() }`. `show` is an idempotent upsert (`priority` is lowest-wins and `align` defaults to `"start"`, like the `<StatusBar>` props); the entry auto-removes on unmount.
 
 ### `createStatusStore()`
 
@@ -163,9 +185,18 @@ Unopinionated. Suggested minimal CSS:
 .statusbar__item { white-space: nowrap; }
 .statusbar__sep { opacity: 0.6; }
 .statusbar[data-empty] { /* style the idle state */ }
+
+/* Pinned sides: groups hold each side; the spacer pushes them apart. */
+.statusbar__group { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+.statusbar__spacer { flex: 1 1 auto; } /* also applied inline, so sides work unstyled */
+
+/* Overflow clipping: keep everything on one line so measurement is meaningful. */
+.statusbar--clip { flex-wrap: nowrap; overflow: hidden; }
 ```
 
-The `data-empty` attribute lets you collapse or fade the bar without unmounting the live region.
+The `data-empty` attribute lets you collapse or fade the bar without unmounting the live region. With `overflow="clip"`, `data-clipped` is set on the bar whenever one or more entries are hidden for space — handy for showing a `…` affordance via CSS.
+
+> `align` and `overflow="clip"` rely on the bar being a **flex row** (`.statusbar { display: flex }`) with flex `.statusbar__group`s — the snippet above covers it. The spacer's `flex: 1` is also set inline, so pinned sides separate even before you add CSS.
 
 ## Accessibility
 

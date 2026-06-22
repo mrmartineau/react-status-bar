@@ -3,6 +3,7 @@ import { cleanup, render } from "@testing-library/react";
 import * as React from "react";
 import {
 	createStatusStore,
+	fitCount,
 	StatusBar,
 	StatusBarProvider,
 	StatusBarViewport,
@@ -214,5 +215,114 @@ describe("StatusBar + StatusBarViewport", () => {
 		const text = getByRole("status").textContent ?? "";
 		expect(text).toContain("second");
 		expect(text).not.toContain("first");
+	});
+});
+
+// ---------- Alignment (pinned sides) ----------
+describe("align", () => {
+	test("entries split into start and end groups", () => {
+		const { container } = render(
+			<StatusBarProvider>
+				<StatusBarViewport mode="stack" />
+				<StatusBar align="start">Left</StatusBar>
+				<StatusBar align="end">Right</StatusBar>
+			</StatusBarProvider>,
+		);
+		const start = container.querySelector(".statusbar__group--start");
+		const end = container.querySelector(".statusbar__group--end");
+		expect(start?.textContent).toContain("Left");
+		expect(start?.textContent).not.toContain("Right");
+		expect(end?.textContent).toContain("Right");
+		expect(end?.textContent).not.toContain("Left");
+	});
+
+	test("end group is reversed so the most important entry sits outermost (right)", () => {
+		const { container } = render(
+			<StatusBarProvider>
+				<StatusBarViewport mode="stack" />
+				<StatusBar align="end" priority={0}>
+					High
+				</StatusBar>
+				<StatusBar align="end" priority={5}>
+					Low
+				</StatusBar>
+			</StatusBarProvider>,
+		);
+		const end = container.querySelector(".statusbar__group--end");
+		const order = Array.from(
+			end?.querySelectorAll(".statusbar__item") ?? [],
+		).map((el) => el.textContent);
+		// least-important first (inner/left), most-important last (outer/right)
+		expect(order).toEqual(["Low", "High"]);
+	});
+
+	test("a spacer is rendered only when there are end entries", () => {
+		const withEnd = render(
+			<StatusBarProvider>
+				<StatusBarViewport mode="stack" />
+				<StatusBar align="end">Right</StatusBar>
+			</StatusBarProvider>,
+		);
+		expect(withEnd.container.querySelector(".statusbar__spacer")).toBeTruthy();
+		cleanup();
+
+		const startOnly = render(
+			<StatusBarProvider>
+				<StatusBarViewport mode="stack" />
+				<StatusBar>Left</StatusBar>
+			</StatusBarProvider>,
+		);
+		expect(startOnly.container.querySelector(".statusbar__spacer")).toBeNull();
+	});
+});
+
+// ---------- Overflow clipping ----------
+describe("overflow", () => {
+	test('overflow="clip" adds the modifier class, data-clip, and a measure layer', () => {
+		const { getByRole, container } = render(
+			<StatusBarProvider>
+				<StatusBarViewport mode="stack" overflow="clip" />
+				<StatusBar>One</StatusBar>
+			</StatusBarProvider>,
+		);
+		const region = getByRole("status");
+		expect(region.className).toContain("statusbar--clip");
+		expect(region.getAttribute("data-clip")).toBe("true");
+		expect(container.querySelector(".statusbar__measure")).toBeTruthy();
+	});
+
+	test("overflow is off by default (no clip class, no measure layer)", () => {
+		const { getByRole, container } = render(
+			<StatusBarProvider>
+				<StatusBarViewport mode="stack" />
+				<StatusBar>One</StatusBar>
+			</StatusBarProvider>,
+		);
+		const region = getByRole("status");
+		expect(region.className).not.toContain("statusbar--clip");
+		expect(region.getAttribute("data-clip")).toBeNull();
+		expect(container.querySelector(".statusbar__measure")).toBeNull();
+	});
+});
+
+// ---------- fitCount (pure overflow math) ----------
+describe("fitCount", () => {
+	test("returns the count whose cumulative right edge fits", () => {
+		// edges: item0 ends at 30, item1 at 70, item2 at 120
+		expect(fitCount([30, 70, 120], 100)).toBe(2);
+		expect(fitCount([30, 70, 120], 120)).toBe(3);
+		expect(fitCount([30, 70, 120], 25)).toBe(0);
+	});
+
+	test("everything fits when available is generous", () => {
+		expect(fitCount([10, 20, 30], 999)).toBe(3);
+	});
+
+	test("empty input fits trivially", () => {
+		expect(fitCount([], 100)).toBe(0);
+	});
+
+	test("an exact fit at the boundary is included", () => {
+		expect(fitCount([50, 100], 100)).toBe(2);
 	});
 });

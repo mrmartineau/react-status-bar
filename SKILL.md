@@ -1,383 +1,222 @@
 ---
-name: creating-npm-packages
-description: 'Scaffold new TypeScript npm packages with ESM + CJS dual output, Biome linting, Bun testing, tsdown bundling, semantic-release publishing, and GitHub Actions CI. Use when asked to create, scaffold, or set up a new npm package.'
+name: react-status-bar
+description: 'Integrate @mrmartineau/react-status-bar into a React app — a portal-based status bar where any component pushes UI into a shared bar and a viewport owns presentation. Use when adding a status bar, contributing transient status from deep in the tree, pinning entries to the left/right (align), clipping overflow VS-Code style, scoping independent bars, or wiring the imperative useStatusBar hook.'
 ---
 
-# Creating npm Packages
+# Integrating @mrmartineau/react-status-bar
 
-Scaffold production-ready TypeScript npm packages with a consistent stack:
-**Bun** (runtime/test), **tsdown** (bundler), **Biome** (lint/format), **semantic-release** (publishing), **GitHub Actions** (CI).
+A lightweight, portal-based **status bar system for React**. Any component, anywhere in the tree, pushes content into a shared bar; a single viewport aggregates the entries and renders them — optionally portaled to a fixed shell node.
 
-## Workflow
+Built on an external store + `useSyncExternalStore`, so a status change re-renders **only** the viewport reading that scope, never the producer tree. The package ships **unstyled** — you supply the CSS (a minimal starting sheet is below).
 
-1. Create the project directory and initialise git
-2. Generate all config files using the templates below
-3. Replace placeholder values (`PACKAGE_NAME`, `PACKAGE_DESCRIPTION`, `GITHUB_OWNER`, `GITHUB_REPO`) with user-provided values
-4. Write initial source code in `src/index.ts` and a starter test in `src/index.test.ts`
-5. Run `bun install`
-6. Run `bun run build` to verify the setup works
-7. Run `bun test` to verify tests pass
+## Install
 
-## Project Structure
-
-```text
-.
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── src/
-│   ├── index.ts
-│   └── index.test.ts
-├── .gitignore
-├── biome.json
-├── LICENSE
-├── package.json
-├── README.md
-├── release.config.mjs
-└── tsconfig.json
+```bash
+npm install @mrmartineau/react-status-bar
+# or: bun add … / pnpm add … / yarn add …
 ```
 
-## File Templates
+`react` and `react-dom` **18+** are peer dependencies (works with 18 and 19). ESM + CJS are both published; just import by name:
 
-### package.json
+```tsx
+import {
+  StatusBarProvider,
+  StatusBarViewport,
+  StatusBar,
+  useStatusBar,
+} from "@mrmartineau/react-status-bar";
+```
 
-```json
-{
-  "name": "PACKAGE_NAME",
-  "version": "0.0.0",
-  "description": "PACKAGE_DESCRIPTION",
-  "license": "ISC",
-  "type": "module",
-  "files": [
-    "dist"
-  ],
-  "author": {
-    "name": "Zander Martineau",
-    "email": "zander@zander.wtf",
-    "url": "https://zander.wtf"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/GITHUB_OWNER/GITHUB_REPO.git"
-  },
-  "homepage": "https://github.com/GITHUB_OWNER/GITHUB_REPO",
-  "bugs": {
-    "url": "https://github.com/GITHUB_OWNER/GITHUB_REPO/issues"
-  },
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+## Mental model — four pieces
+
+1. **`<StatusBarProvider>`** — wraps your app (or a subtree). Owns the store. Renders no DOM and never re-renders on status changes.
+2. **`<StatusBarViewport>`** — the **host**. Reads one scope and renders its entries. Place one per visible bar. Owns presentation (mode, separator, sides, overflow). Can portal its output to a fixed shell node.
+3. **`<StatusBar>`** — a **producer**. A side-effect component: while mounted it registers its `children` as an entry; on unmount the entry is removed. Renders `null`.
+4. **`useStatusBar()`** — the **imperative** equivalent of `<StatusBar>` for event handlers / async flows (`show()` / `hide()`).
+
+Entries sort by `priority` (**lower = more important**, incident-style P0 > P1 > P5), then by recency.
+
+## Minimal setup
+
+```tsx
+import { StatusBarProvider, StatusBarViewport, StatusBar } from "@mrmartineau/react-status-bar";
+
+function App() {
+  return (
+    <StatusBarProvider>
+      {/* The host — one bar. mode="stack" shows all entries. */}
+      <StatusBarViewport mode="stack" separator="•" />
+
+      {/* …anywhere deeper in the tree… */}
+      <StatusBar priority={1}>Preview mode</StatusBar>
+      <StatusBar priority={2}>Autosaving…</StatusBar>
+    </StatusBarProvider>
+  );
+}
+// → "Preview mode • Autosaving…"
+```
+
+`mode="replace"` (the default) shows only the single most-important entry; `mode="stack"` shows them all, sorted.
+
+## Required CSS (ships unstyled)
+
+The component only emits class names + structure. Drop in this sheet to get a working horizontal bar — **`align` and `overflow="clip"` require the flex layout below**:
+
+```css
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 28px; /* reserve height → no layout shift when entries arrive */
+}
+.statusbar__item { white-space: nowrap; }
+.statusbar__sep { opacity: 0.6; }
+.statusbar[data-empty] { /* style the idle state */ }
+
+/* Pinned sides: each side is a group; the spacer pushes them apart. */
+.statusbar__group { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+.statusbar__spacer { flex: 1 1 auto; } /* also applied inline, so sides work even unstyled */
+
+/* Overflow clipping: keep everything on one line so measurement is meaningful. */
+.statusbar--clip { flex-wrap: nowrap; overflow: hidden; }
+```
+
+## API reference
+
+### Exports
+
+| Export | Kind | Purpose |
+| --- | --- | --- |
+| `StatusBarProvider` | component | Owns the store; wrap your app. |
+| `StatusBarViewport` | component | Host that renders a scope's entries. |
+| `StatusBar` | component | Declarative producer (registers while mounted). |
+| `useStatusBar` | hook | Imperative `show()` / `hide()`. |
+| `createStatusStore` | factory | The plain-JS store (inject in tests, or drive without React). |
+| `fitCount` | function | Pure overflow math: how many items fit a width. Rarely needed directly. |
+| `StatusEntry`, `StatusAlign`, `StatusBarMode`, `StatusBarOverflow`, `StatusStore` | types | Public TypeScript types. |
+
+### `<StatusBarProvider>`
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | App subtree. |
+| `store` | `StatusStore` | auto | Inject your own store (handy in tests / multi-renderer setups). |
+
+### `<StatusBar>` (producer)
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `children` | `ReactNode` | — | Content to contribute. |
+| `priority` | `number` | lowest | Lower = more important; lowest-numbered wins in `replace` mode. Unset → rendered last. |
+| `align` | `"start" \| "end"` | `"start"` | Which side to pin to. `start` collects left, `end` right, fluid gap between. |
+| `scope` | `string` | `"global"` | Target bar. Changing it migrates the entry. |
+| `id` | `string` | auto | Stable identity across remounts. |
+
+### `<StatusBarViewport>` (host)
+
+| Prop | Type | Default | Notes |
+| --- | --- | --- | --- |
+| `scope` | `string` | `"global"` | Which scope to read. |
+| `mode` | `"replace" \| "stack"` | `"replace"` | `replace` = winner only; `stack` = all, sorted. |
+| `overflow` | `"visible" \| "clip"` | `"visible"` | `clip` hides the least-important entries one by one until the rest fit one line. Adds `statusbar--clip` + `data-clipped`. Needs flex layout. |
+| `empty` | `ReactNode` | `null` | Rendered in the always-mounted live region when idle. |
+| `separator` | `ReactNode` | — | Between items in `stack` mode. `aria-hidden`. |
+| `portalTarget` | `HTMLElement \| string \| null` | — | Renders inline if omitted; warns in dev if a selector matches nothing. |
+| `className` | `string` | — | Added to the live region. |
+| `ariaLive` | `"off" \| "polite" \| "assertive"` | `"polite"` | Live-region politeness. |
+| `renderItem` | `(entry: StatusEntry) => ReactNode` | — | Custom per-item wrapper (badges, icons, transitions). |
+
+### `useStatusBar({ scope? })`
+
+Returns `{ show(node, { priority?, align? }), hide() }`. `show` is an idempotent upsert; the entry auto-removes when the calling component unmounts.
+
+## Pinned sides (`align`)
+
+Push entries to opposite ends with a fluid gap between — like an editor status bar. Important entries sit on the **outer** edges; the lowest-priority entries land nearest the centre.
+
+```tsx
+<StatusBarViewport mode="stack" separator="•" />
+
+<StatusBar align="start" priority={0}>main ✓</StatusBar>
+<StatusBar align="start" priority={3}>Spaces: 2</StatusBar>
+<StatusBar align="end" priority={0}>Ln 12, Col 4</StatusBar>
+<StatusBar align="end" priority={4}>Prettier</StatusBar>
+// → [ main ✓ • Spaces: 2 .............. Prettier • Ln 12, Col 4 ]
+```
+
+Requires the flex `.statusbar` / `.statusbar__group` CSS above. The spacer's `flex: 1` is also set inline, so sides separate even before you add CSS.
+
+## Overflow clipping (`overflow="clip"`)
+
+Opt in and the viewport measures itself and hides the **least-important** entries one at a time when they don't fit, restoring them as space returns (like VS Code's status bar). With pinned sides, the inner (centre-most) entries clip first; with a single side, the right-most clips first.
+
+```tsx
+<StatusBarViewport mode="stack" overflow="clip" separator="•" />
+```
+
+- Forces a single line (`flex-wrap: nowrap`) — needs the flex layout.
+- Sets `data-clipped` on the bar while anything is hidden — use it for a `…` affordance:
+  ```css
+  .statusbar[data-clipped]::after { content: "…"; opacity: 0.6; }
+  ```
+- Uses `ResizeObserver`; recomputes on resize and on entry/content change.
+
+## Scopes (independent bars)
+
+One provider can drive many logical bars. Match a viewport's `scope` to producers' `scope`:
+
+```tsx
+<StatusBarViewport scope="global" portalTarget="#statusbar-global" />
+<StatusBarViewport scope="editor" portalTarget="#statusbar-editor" mode="stack" />
+
+<StatusBar scope="editor">Spellcheck enabled</StatusBar>
+```
+
+Default scope is `"global"`. Scopes are fully independent.
+
+## Portaling to a fixed shell
+
+Give the viewport a `portalTarget` (element or selector) to render its output into a fixed shell node anywhere in the DOM — useful for a sticky footer bar:
+
+```tsx
+<div id="statusbar-global" className="statusbar-shell" /> {/* give it a min-height */}
+<StatusBarViewport portalTarget="#statusbar-global" mode="stack" separator="•" />
+```
+
+Omit `portalTarget` to render **inline** where the viewport sits.
+
+## Imperative API
+
+```tsx
+import { useStatusBar } from "@mrmartineau/react-status-bar";
+
+function SaveButton() {
+  const sb = useStatusBar(); // or useStatusBar({ scope: "editor" })
+  async function onClick() {
+    sb.show("Saving…", { priority: 5 });
+    try {
+      await save();
+      sb.show("Saved", { priority: 3 });       // same entry, updated in place
+      setTimeout(() => sb.hide(), 1500);
+    } catch {
+      sb.show("⚠️ Save failed", { priority: 0 }); // escalate to P0
     }
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "engines": {
-    "node": ">=20.19.0"
-  },
-  "scripts": {
-    "build": "tsdown src/index.ts --format cjs,esm --target es2020 --dts --sourcemap --clean",
-    "check": "biome check --write .",
-    "dev": "tsdown src/index.ts --format cjs,esm --target es2020 --dts --sourcemap --watch",
-    "release": "semantic-release",
-    "test": "bun test"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.4.6",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.0",
-    "@types/bun": "^1.3.10",
-    "@types/node": "^25.4.0",
-    "semantic-release": "^25.0.3",
-    "tsdown": "^0.21.2",
-    "typescript": "^5.9.3"
   }
+  return <button onClick={onClick}>Save</button>;
 }
 ```
 
-Key conventions:
-- Always set `"type": "module"` for ESM-first
-- Dual `exports` map with `types`, `import`, and `require` conditions
-- `"files": ["dist"]` to publish only built output
-- `"publishConfig": { "access": "public" }` for scoped packages
-- Use `tsdown` (not tsup) for bundling
+`show()` is an idempotent upsert (one entry per hook instance); it auto-removes on unmount. Pass `{ align }` to pin the imperative entry to a side.
 
-### release.config.mjs
+## SSR & hydration
 
-```js
-export default {
-  branches: ['main'],
-  plugins: [
-    '@semantic-release/commit-analyzer',
-    '@semantic-release/release-notes-generator',
-    '@semantic-release/npm',
-    [
-      '@semantic-release/git',
-      {
-        assets: ['package.json'],
-        message:
-          'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
-      },
-    ],
-    [
-      '@semantic-release/github',
-      {
-        failComment: false,
-        failTitle: false,
-      },
-    ],
-  ],
-}
-```
+Entries register in effects, so the server and the hydration pass both render an empty bar (`getServerSnapshot` returns a stable empty array) — **no hydration mismatch**. Content appears in a layout effect right after hydration, before paint; pair with a CSS `min-height` for zero layout shift.
 
-### tsconfig.json
+## Gotchas
 
-```json
-{
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "module": "NodeNext",
-    "outDir": "dist",
-    "rootDir": "src",
-    "sourceMap": true,
-    "declaration": true
-  },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"]
-}
-```
-
-### biome.json
-
-```json
-{
-  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
-  "files": {
-    "ignoreUnknown": false,
-    "includes": ["**", "!dist"]
-  }
-}
-```
-
-### .github/workflows/ci.yml
-
-```yaml
-name: CI
-
-on:
-  pull_request:
-  push:
-    branches:
-      - main
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-jobs:
-  ci:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Check
-        run: bun run check
-
-      - name: Build
-        run: bun run build
-
-      - name: Run Tests
-        run: bun test
-
-  release:
-    needs: ci
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-
-      - name: Install dependencies
-        run: bun install
-
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: bun run release
-```
-
-### .gitignore
-
-```
-node_modules/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-# Environment variables
-.env
-.env.*
-!.env.example
-
-# Build output and caches
-dist/
-build/
-coverage/
-.cache/
-.turbo/
-.vite/
-*.tsbuildinfo
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Editor/IDE files
-.idea/
-.vscode/
-*.swp
-*.swo
-```
-
-### LICENSE (ISC)
-
-```
-ISC License
-
-Copyright (c) CURRENT_YEAR Zander Martineau
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-```
-
-### src/index.ts (starter)
-
-Write the actual package implementation here. If no specific functionality is requested, use this minimal starter:
-
-```ts
-export interface HelloOptions {
-	punctuation?: string;
-}
-
-export function hello(
-	name = "world",
-	{ punctuation = "!" }: HelloOptions = {},
-): string {
-	return `Hello, ${name}${punctuation}`;
-}
-```
-
-### src/index.test.ts (starter)
-
-```ts
-import { describe, expect, test } from 'bun:test'
-
-import { hello } from './index.js'
-
-describe('hello', () => {
-  test('returns a greeting with the provided name', () => {
-    expect(hello('Bun')).toBe('Hello, Bun!')
-  })
-})
-```
-
-## Conventions
-
-- **Runtime**: Bun for installing, running, and testing
-- **Bundler**: tsdown (ESM + CJS dual output with `.js` and `.cjs` extensions)
-- **Linting/formatting**: Biome (not ESLint/Prettier)
-- **Testing**: `bun:test` (not Jest or Vitest)
-- **Releasing**: semantic-release with conventional commits — releases are fully automated via CI
-- **Target**: ES2020 for broad compatibility, Node.js ≥ 20.19.0
-- **Strict TypeScript**: `strict`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `verbatimModuleSyntax`
-- **Imports**: Always use `.js` extension in relative imports (required by `verbatimModuleSyntax` + NodeNext)
-
-## Release Conventions
-
-Releases are automated via `semantic-release` on every push to `main`. Version bumps are determined by conventional commit messages:
-
-- `fix:` → patch release
-- `feat:` → minor release
-- `feat!:` or `BREAKING CHANGE:` in footer → major release
-
-The CI `release` job requires two repository secrets:
-- `NPM_TOKEN` — npm publish token
-- `GITHUB_TOKEN` — automatically provided by GitHub Actions
-
-## Multiple Entrypoints
-
-If the package needs multiple entrypoints, update both the build command and the `exports` map:
-
-```json
-{
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    },
-    "./utils": {
-      "types": "./dist/utils.d.ts",
-      "import": "./dist/utils.js",
-      "require": "./dist/utils.cjs"
-    }
-  },
-  "scripts": {
-    "build": "tsdown src/index.ts src/utils.ts --format cjs,esm --target es2020 --dts --sourcemap --clean"
-  }
-}
-```
-
-## Adding Runtime Dependencies
-
-When the package needs runtime dependencies, add them to `dependencies` (not `devDependencies`). Only devDependencies should include build tools, types, and test utilities.
-
-## README Template
-
-Generate a README with:
-1. Package name as heading
-2. One-line description
-3. Install instructions (`bun add PACKAGE_NAME` / `npm install PACKAGE_NAME`)
-4. Usage example with import
-5. API documentation for exported functions/types
-6. License footer
+- **Unstyled by default** — without the CSS above you get a vertical, unstyled list. `align` and `overflow="clip"` specifically need the flex `.statusbar` / `.statusbar__group` rules.
+- **`overflow="clip"` forces one line** — don't expect wrapping; it measures a single row to decide what fits.
+- **Priority is lowest-wins** — `priority={0}` is the most important, not the least. Unset priority renders last.
+- **One viewport per visible bar per scope** — multiple viewports on the same scope each render the full set (fine for mirrored bars, surprising otherwise).
+- **Producers render `null`** — `<StatusBar>` contributes to the bar; it never renders inline where you place it.
+- **The live region is always mounted** (`role="status"` / `aria-live`) — keep one viewport mounted so screen readers announce reliably; reserve `ariaLive="assertive"` for genuinely urgent states.
