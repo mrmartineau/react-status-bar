@@ -37,6 +37,7 @@ export const sections: NavSection[] = [
 		items: [
 			{ href: "/", label: "Overview", exact: true },
 			{ href: "/getting-started", label: "Getting started" },
+			{ href: "/styling", label: "Styling" },
 			{ href: "/api", label: "API reference" },
 		],
 	},
@@ -45,6 +46,8 @@ export const sections: NavSection[] = [
 		sectionOrder: 1,
 		items: [
 			{ href: "/modes", label: "Replace vs Stack" },
+			{ href: "/sides", label: "Pinned sides" },
+			{ href: "/overflow", label: "Overflow clipping" },
 			{ href: "/imperative", label: "Imperative API" },
 			{ href: "/scopes", label: "Scopes" },
 			{ href: "/portals", label: "Portals" },

@@ -1,0 +1,61 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { OverflowDemo } from "../islands/OverflowDemo.tsx";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `<StatusBarViewport mode="stack" separator="•" overflow="clip" />
+
+<StatusBar align="start" priority={0}>main ✓</StatusBar>
+<StatusBar align="start" priority={5}>Spaces: 2</StatusBar>
+<StatusBar align="start" priority={6}>UTF-8</StatusBar>
+<StatusBar align="end" priority={0}>Ln 12, Col 4</StatusBar>
+<StatusBar align="end" priority={4}>Prettier</StatusBar>
+<StatusBar align="end" priority={7}>⚠ 3</StatusBar>`;
+
+const css = `.statusbar--clip {
+  position: relative; /* contains the off-screen measure layer */
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+/* Optional: hint that entries are hidden. */
+.statusbar[data-clipped]::after { content: "…"; opacity: 0.5; }`;
+---
+
+<Layout title="Overflow clipping">
+	<PageStatus label="Viewing: overflow" client:load />
+
+	<p class="page__lead">
+		Set <code>overflow="clip"</code> and the viewport measures itself and hides
+		the <em>least important</em> entries one at a time when they don't fit,
+		bringing them back as space returns — like VS Code's status bar.
+	</p>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Shrink the bar</CardTitle></CardHeader>
+		<CardBody>
+			<OverflowDemo client:visible />
+			<p>
+				Drag the width slider (or the box's bottom-right corner). With
+				<code>clip</code>, the highest priority numbers go first —
+				<code>⚠ 3</code> (p7), then <code>UTF-8</code> (p6) — and the inner
+				entries clip before the outer ones. The <code>data-clipped</code>
+				attribute adds the <code>…</code>. Flip to <code>visible</code> to see
+				the same entries simply overflow and get cut off.
+			</p>
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Required CSS</CardTitle></CardHeader>
+		<CardBody>
+			<p>
+				Clipping needs a single-line flex bar. Add <code>position: relative</code>
+				so the hidden measurement layer stays contained.
+			</p>
+			<CodeBlock code={css} lang="css" />
+		</CardBody>
+	</Card>
+</Layout>

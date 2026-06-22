@@ -1,0 +1,57 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import { SidesDemo } from "../islands/SidesDemo.tsx";
+import Layout from "../layouts/Layout.astro";
+
+const snippet = `<StatusBarViewport mode="stack" separator="•" />
+
+{/* start group — most important on the far left */}
+<StatusBar align="start" priority={0}>main ✓</StatusBar>
+<StatusBar align="start" priority={3}>Spaces: 2</StatusBar>
+
+{/* end group — most important on the far right */}
+<StatusBar align="end" priority={0}>Ln 12, Col 4</StatusBar>
+<StatusBar align="end" priority={4}>Prettier</StatusBar>`;
+
+const css = `.statusbar__group { display: flex; align-items: center; gap: 0.5rem; }
+.statusbar__spacer { flex: 1 1 auto; } /* also set inline */`;
+---
+
+<Layout title="Pinned sides">
+	<PageStatus label="Viewing: sides" client:load />
+
+	<p class="page__lead">
+		Give an entry <code>align="start"</code> or <code>align="end"</code> to pin
+		it to a side. The two groups are pushed apart by a fluid spacer — like an
+		editor status bar. The most important entry sits on the <em>outer</em> edge
+		of each group.
+	</p>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Two groups, one bar</CardTitle></CardHeader>
+		<CardBody>
+			<SidesDemo client:visible />
+			<p>
+				Toggle the clock's <code>align</code> and watch it hop from the right
+				group to the left. Within each group, lower priority numbers win the
+				outer edge: <code>main ✓</code> and <code>Ln 12, Col 4</code> (both
+				priority 0) sit furthest out.
+			</p>
+			<CodeBlock code={snippet} lang="tsx" />
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Required CSS</CardTitle></CardHeader>
+		<CardBody>
+			<p>
+				The bar ships unstyled. Sides need a flex <code>.statusbar</code> with
+				flex groups; the spacer's <code>flex: 1</code> is also set inline, so
+				sides separate even before you add CSS.
+			</p>
+			<CodeBlock code={css} lang="css" />
+		</CardBody>
+	</Card>
+</Layout>

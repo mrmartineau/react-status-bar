@@ -498,6 +498,31 @@ a.site-logo {
 	font-style: italic;
 }
 
+/* Pinned sides: each side is a flex group; the spacer pushes them apart. */
+.statusbar__group {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	min-width: 0;
+}
+
+.statusbar__spacer {
+	flex: 1 1 auto;
+}
+
+/* Overflow clipping: one line, and contain the off-screen measure layer. */
+.statusbar--clip {
+	position: relative;
+	flex-wrap: nowrap;
+	overflow: hidden;
+}
+
+.statusbar[data-clipped]::after {
+	content: "…";
+	opacity: 0.5;
+	padding-inline-start: var(--space-2xs);
+}
+
 /* ---------- Fixed global bar ---------- */
 .statusbar-shell {
 	position: fixed;

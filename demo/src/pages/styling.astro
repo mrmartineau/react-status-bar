@@ -1,0 +1,151 @@
+---
+import { Card, CardBody, CardHeader, CardTitle } from "@mrmartineau/zui/astro";
+import CodeBlock from "../components/CodeBlock.astro";
+import { PageStatus } from "../islands/PageStatus.tsx";
+import { StylePreview } from "../islands/StylePreview.tsx";
+import Layout from "../layouts/Layout.astro";
+
+// --- Plain CSS base sheet (copy-paste, framework-free) ---
+const css = `/* The bar itself (the role="status" live region). */
+.statusbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 28px;
+  padding-inline: 0.75rem;
+  font-size: 0.8125rem;
+  color: #c9d1d9;
+  background: #0d1117;
+  border-top: 1px solid #21262d;
+}
+
+/* Pinned sides: each side is a flex group; the spacer pushes them apart. */
+.statusbar__group { display: flex; align-items: center; gap: 0.5rem; min-width: 0; }
+.statusbar__spacer { flex: 1 1 auto; }
+
+/* Per-entry wrapper + the separator between stacked entries. */
+.statusbar__item { display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap; }
+.statusbar__sep { opacity: 0.4; }
+
+/* overflow="clip": single line; position:relative contains the measure layer. */
+.statusbar--clip { position: relative; flex-wrap: nowrap; overflow: hidden; }
+
+/* State hooks. */
+.statusbar[data-empty] { color: #6e7681; font-style: italic; }
+.statusbar[data-clipped]::after { content: "…"; opacity: 0.5; padding-inline-start: 0.25rem; }`;
+
+// --- Tailwind: the component owns the markup, so style its classes in CSS. ---
+const tailwind = `/* app.css — Tailwind v4 */
+@import "tailwindcss";
+
+@layer components {
+  .statusbar {
+    @apply flex items-center gap-2 min-h-7 px-3 text-[13px]
+           text-zinc-200 bg-zinc-900 border-t border-zinc-800;
+  }
+  .statusbar__group  { @apply flex items-center gap-2 min-w-0; }
+  .statusbar__spacer { @apply flex-1; }
+  .statusbar__item   { @apply inline-flex items-center gap-1 whitespace-nowrap; }
+  .statusbar__sep    { @apply opacity-40; }
+  .statusbar--clip   { @apply relative flex-nowrap overflow-hidden; }
+  .statusbar[data-empty]   { @apply text-zinc-500 italic; }
+  .statusbar[data-clipped]::after { content: "…"; @apply opacity-50 ps-1; }
+}`;
+
+// --- Tailwind utilities inline, no global CSS for the outer bar + items. ---
+const utilities = `<StatusBarViewport
+  mode="stack"
+  separator={<span className="opacity-40">•</span>}
+  // className is appended to the .statusbar element
+  className="min-h-7 px-3 text-[13px] text-zinc-200 bg-zinc-900 border-t border-zinc-800"
+  renderItem={(entry) => (
+    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+      {entry.node}
+    </span>
+  )}
+/>
+
+// The component still renders .statusbar__group / __spacer itself, so when you
+// use \`align\` keep these two rules in CSS (utilities can't reach those nodes):
+//   .statusbar__group  { @apply flex items-center gap-2 min-w-0; }
+//   .statusbar__spacer { @apply flex-1; }`;
+---
+
+<Layout title="Styling">
+	<PageStatus label="Viewing: styling" client:load />
+
+	<p class="page__lead">
+		The bar ships <strong>unstyled</strong> — it emits a small, stable set of
+		class names and you bring the looks. Copy a base sheet below to get running,
+		then tweak. Because the component owns its internal markup, the cleanest
+		route in any framework is to target those class names.
+	</p>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Wired up with base styles</CardTitle></CardHeader>
+		<CardBody>
+			<StylePreview client:visible />
+			<p>
+				The same class names the snippets below target — pinned sides, a
+				separator, and a hover-free editor look.
+			</p>
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Plain CSS</CardTitle></CardHeader>
+		<CardBody>
+			<p>Framework-free. Drop this in a stylesheet and you're done.</p>
+			<CodeBlock code={css} lang="css" />
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>Tailwind</CardTitle></CardHeader>
+		<CardBody>
+			<p>
+				Style the component's classes in a <code>@layer components</code> block
+				with <code>@apply</code>. This keeps all elements covered — including the
+				internal <code>__group</code>, <code>__spacer</code> and
+				<code>--clip</code> nodes that utility classes on your JSX can't reach.
+			</p>
+			<CodeBlock code={tailwind} lang="css" />
+			<p>
+				Prefer utilities on the JSX? <code>className</code> is appended to the
+				bar and <code>renderItem</code> wraps each entry — but you still need the
+				two group rules in CSS for <code>align</code>:
+			</p>
+			<CodeBlock code={utilities} lang="tsx" />
+		</CardBody>
+	</Card>
+
+	<Card class="card">
+		<CardHeader><CardTitle>What you can target</CardTitle></CardHeader>
+		<CardBody>
+			<table class="ref">
+				<thead>
+					<tr><th>Selector</th><th>Element</th></tr>
+				</thead>
+				<tbody>
+					<tr><td><code>.statusbar</code></td><td>The bar / live region (<code>role="status"</code>).</td></tr>
+					<tr><td><code>.statusbar--replace</code> / <code>--stack</code></td><td>Current <code>mode</code> modifier.</td></tr>
+					<tr><td><code>.statusbar--clip</code></td><td>Present when <code>overflow="clip"</code>.</td></tr>
+					<tr><td><code>.statusbar__group--start</code> / <code>--end</code></td><td>The two pinned-side groups.</td></tr>
+					<tr><td><code>.statusbar__spacer</code></td><td>Fluid gap between the groups.</td></tr>
+					<tr><td><code>.statusbar__item</code></td><td>Default per-entry wrapper (replaced by <code>renderItem</code>).</td></tr>
+					<tr><td><code>.statusbar__sep</code></td><td>Separator between stacked entries.</td></tr>
+					<tr><td><code>[data-empty]</code></td><td>Set when there are no entries.</td></tr>
+					<tr><td><code>[data-clip]</code></td><td>Set when <code>overflow="clip"</code> is on.</td></tr>
+					<tr><td><code>[data-clipped]</code></td><td>Set while one or more entries are hidden for space.</td></tr>
+				</tbody>
+			</table>
+		</CardBody>
+	</Card>
+</Layout>
+
+<style>
+	.ref { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+	.ref th, .ref td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: var(--border-style) 1px var(--border); vertical-align: top; }
+	.ref th { color: var(--muted); font-weight: 600; }
+	.ref code { white-space: nowrap; }
+</style>
