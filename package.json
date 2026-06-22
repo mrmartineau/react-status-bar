@@ -1,6 +1,6 @@
 {
 	"name": "@mrmartineau/react-status-bar",
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"description": "Lightweight, portal-based status bar system for React. Any component can push UI into a shared bar; the viewport owns presentation.",
 	"license": "ISC",
 	"type": "module",
