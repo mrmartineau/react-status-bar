@@ -1,0 +1,19 @@
+name: Security
+
+on:
+  push:
+    branches: ['**']
+
+jobs:
+  safe-chain:
+    name: Aikido safe-chain
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install safe-chain
+        run: curl -fsSL https://github.com/AikidoSec/safe-chain/releases/latest/download/install-safe-chain.sh | sh -s -- --ci
+      - name: Install dependencies
+        run: bun install

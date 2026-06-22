@@ -1,0 +1,13 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "react-status-bar",
+	"compatibility_date": "2026-06-22",
+	// Fully static Astro build output, served as assets from a Worker. No `main`
+	// entry is needed since the demo has no SSR routes; add one (pointing at the
+	// @astrojs/cloudflare adapter's emitted worker) if server rendering is added.
+	"assets": {
+		"directory": "./dist",
+		"not_found_handling": "404-page"
+	},
+	"observability": { "enabled": true }
+}
