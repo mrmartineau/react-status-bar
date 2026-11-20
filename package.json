@@ -51,7 +51,7 @@
 	},
 	"scripts": {
 		"build": "tsdown src/index.tsx --format cjs,esm --target es2020 --dts --sourcemap --clean",
-		"check": "biome check --write .",
+		"check": "oxlint --fix && oxfmt",
 		"dev": "tsdown src/index.tsx --format cjs,esm --target es2020 --dts --sourcemap --watch",
 		"demo": "bun run --cwd demo dev",
 		"release": "semantic-release",
@@ -62,8 +62,8 @@
 		"react-dom": ">=18.0.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.4.6",
 		"@happy-dom/global-registrator": "^16.5.3",
+		"@mrmartineau/kit": "^1.1.0",
 		"@semantic-release/git": "^10.0.1",
 		"@semantic-release/github": "^11.0.0",
 		"@testing-library/dom": "^10.4.0",
@@ -72,6 +72,8 @@
 		"@types/node": "^25.4.0",
 		"@types/react": "^19.0.0",
 		"@types/react-dom": "^19.0.0",
+		"oxfmt": "^0.79.0",
+		"oxlint": "^1.94.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"semantic-release": "^25.0.3",

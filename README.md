@@ -224,7 +224,7 @@ Or from the repo root: `bun run demo`.
 bun install
 bun run build   # ESM + CJS + .d.ts via tsdown
 bun test        # bun:test + happy-dom
-bun run check   # Biome lint + format
+bun run check   # oxlint + oxfmt
 ```
 
 ## License
