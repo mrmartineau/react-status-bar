@@ -1,33 +1,33 @@
 /* https://www.totaltypescript.com/how-to-create-an-npm-package#32-set-up-a-tsconfigjson */
 {
-	"compilerOptions": {
-		/* Base Options: */
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"target": "es2022",
-		"lib": ["es2022", "dom", "dom.iterable"],
-		"allowJs": true,
-		"resolveJsonModule": true,
-		"moduleDetection": "force",
-		"isolatedModules": true,
-		"verbatimModuleSyntax": true,
+  "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
 
-		/* React */
-		"jsx": "react-jsx",
+    /* React */
+    "jsx": "react-jsx",
 
-		/* Strictness */
-		"strict": true,
-		"noUncheckedIndexedAccess": true,
-		"noImplicitOverride": true,
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
 
-		/* If transpiling with TypeScript: */
-		"module": "NodeNext",
-		"outDir": "dist",
-		"rootDir": "src",
-		"sourceMap": true,
+    /* If transpiling with TypeScript: */
+    "module": "NodeNext",
+    "outDir": "dist",
+    "rootDir": "src",
+    "sourceMap": true,
 
-		/* AND if you're building for a library: */
-		"declaration": true
-	},
-	"include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
+    /* AND if you're building for a library: */
+    "declaration": true
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
 }

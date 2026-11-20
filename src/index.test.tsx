@@ -1,328 +1,320 @@
-import { afterEach, describe, expect, test } from "bun:test";
-import { cleanup, render } from "@testing-library/react";
-import * as React from "react";
+import { afterEach, describe, expect, test } from 'bun:test'
+import { cleanup, render } from '@testing-library/react'
+import * as React from 'react'
 import {
-	createStatusStore,
-	fitCount,
-	StatusBar,
-	StatusBarProvider,
-	StatusBarViewport,
-	useStatusBar,
-} from "./index.js";
+  createStatusStore,
+  fitCount,
+  StatusBar,
+  StatusBarProvider,
+  StatusBarViewport,
+  useStatusBar,
+} from './index.js'
 
-afterEach(cleanup);
+afterEach(cleanup)
 
 // ---------- Store (pure, no React) ----------
-describe("createStatusStore", () => {
-	test("upsert adds an entry to a scope", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "hello" });
-		const snap = store.getSnapshot("global");
-		expect(snap).toHaveLength(1);
-		expect(snap[0]?.node).toBe("hello");
-	});
+describe('createStatusStore', () => {
+  test('upsert adds an entry to a scope', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'hello' })
+    const snap = store.getSnapshot('global')
+    expect(snap).toHaveLength(1)
+    expect(snap[0]?.node).toBe('hello')
+  })
 
-	test("upsert is idempotent by id (no duplicates)", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "one" });
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "two" });
-		const snap = store.getSnapshot("global");
-		expect(snap).toHaveLength(1);
-		expect(snap[0]?.node).toBe("two");
-	});
+  test('upsert is idempotent by id (no duplicates)', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'one' })
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'two' })
+    const snap = store.getSnapshot('global')
+    expect(snap).toHaveLength(1)
+    expect(snap[0]?.node).toBe('two')
+  })
 
-	test("upsert preserves registration order across updates", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "a" });
-		store.upsert({ id: "b", scope: "global", priority: 0, node: "b" });
-		const orderA = store.getSnapshot("global").find((e) => e.id === "a")?.order;
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "a2" });
-		const orderA2 = store
-			.getSnapshot("global")
-			.find((e) => e.id === "a")?.order;
-		expect(orderA2).toBe(orderA as number);
-	});
+  test('upsert preserves registration order across updates', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'a' })
+    store.upsert({ id: 'b', scope: 'global', priority: 0, node: 'b' })
+    const orderA = store.getSnapshot('global').find((e) => e.id === 'a')?.order
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'a2' })
+    const orderA2 = store.getSnapshot('global').find((e) => e.id === 'a')?.order
+    expect(orderA2).toBe(orderA as number)
+  })
 
-	test("sorts by priority asc (lower = more important), then recency desc", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "top", scope: "global", priority: 1, node: "top" });
-		store.upsert({ id: "least", scope: "global", priority: 5, node: "least" });
-		store.upsert({ id: "mid1", scope: "global", priority: 3, node: "mid1" });
-		store.upsert({ id: "mid2", scope: "global", priority: 3, node: "mid2" });
-		const ids = store.getSnapshot("global").map((e) => e.id);
-		// top(1) first, then the two priority-3 entries newest-first, then least(5)
-		expect(ids).toEqual(["top", "mid2", "mid1", "least"]);
-	});
+  test('sorts by priority asc (lower = more important), then recency desc', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'top', scope: 'global', priority: 1, node: 'top' })
+    store.upsert({ id: 'least', scope: 'global', priority: 5, node: 'least' })
+    store.upsert({ id: 'mid1', scope: 'global', priority: 3, node: 'mid1' })
+    store.upsert({ id: 'mid2', scope: 'global', priority: 3, node: 'mid2' })
+    const ids = store.getSnapshot('global').map((e) => e.id)
+    // top(1) first, then the two priority-3 entries newest-first, then least(5)
+    expect(ids).toEqual(['top', 'mid2', 'mid1', 'least'])
+  })
 
-	test("unset priority defaults to lowest (rendered last)", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "explicit", scope: "global", priority: 1, node: "x" });
-		// Mirror the component/hook default: omitted priority → lowest.
-		store.upsert({
-			id: "unset",
-			scope: "global",
-			priority: Number.POSITIVE_INFINITY,
-			node: "y",
-		});
-		expect(store.getSnapshot("global").map((e) => e.id)).toEqual([
-			"explicit",
-			"unset",
-		]);
-	});
+  test('unset priority defaults to lowest (rendered last)', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'explicit', scope: 'global', priority: 1, node: 'x' })
+    // Mirror the component/hook default: omitted priority → lowest.
+    store.upsert({
+      id: 'unset',
+      scope: 'global',
+      priority: Number.POSITIVE_INFINITY,
+      node: 'y',
+    })
+    expect(store.getSnapshot('global').map((e) => e.id)).toEqual(['explicit', 'unset'])
+  })
 
-	test("two unset (lowest) priorities fall back to recency", () => {
-		const store = createStatusStore();
-		store.upsert({
-			id: "older",
-			scope: "global",
-			priority: Number.POSITIVE_INFINITY,
-			node: "o",
-		});
-		store.upsert({
-			id: "newer",
-			scope: "global",
-			priority: Number.POSITIVE_INFINITY,
-			node: "n",
-		});
-		// No NaN from Infinity - Infinity: comparator falls through to recency.
-		expect(store.getSnapshot("global").map((e) => e.id)).toEqual([
-			"newer",
-			"older",
-		]);
-	});
+  test('two unset (lowest) priorities fall back to recency', () => {
+    const store = createStatusStore()
+    store.upsert({
+      id: 'older',
+      scope: 'global',
+      priority: Number.POSITIVE_INFINITY,
+      node: 'o',
+    })
+    store.upsert({
+      id: 'newer',
+      scope: 'global',
+      priority: Number.POSITIVE_INFINITY,
+      node: 'n',
+    })
+    // No NaN from Infinity - Infinity: comparator falls through to recency.
+    expect(store.getSnapshot('global').map((e) => e.id)).toEqual(['newer', 'older'])
+  })
 
-	test("getSnapshot is referentially stable between changes", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "a" });
-		const first = store.getSnapshot("global");
-		const second = store.getSnapshot("global");
-		expect(first).toBe(second);
-		store.upsert({ id: "b", scope: "global", priority: 0, node: "b" });
-		expect(store.getSnapshot("global")).not.toBe(first);
-	});
+  test('getSnapshot is referentially stable between changes', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'a' })
+    const first = store.getSnapshot('global')
+    const second = store.getSnapshot('global')
+    expect(first).toBe(second)
+    store.upsert({ id: 'b', scope: 'global', priority: 0, node: 'b' })
+    expect(store.getSnapshot('global')).not.toBe(first)
+  })
 
-	test("remove deletes by id and prunes empty scopes", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "a" });
-		store.remove("global", "a");
-		expect(store.getSnapshot("global")).toHaveLength(0);
-	});
+  test('remove deletes by id and prunes empty scopes', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'a' })
+    store.remove('global', 'a')
+    expect(store.getSnapshot('global')).toHaveLength(0)
+  })
 
-	test("scopes are independent", () => {
-		const store = createStatusStore();
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "g" });
-		store.upsert({ id: "a", scope: "editor", priority: 0, node: "e" });
-		expect(store.getSnapshot("global")).toHaveLength(1);
-		expect(store.getSnapshot("editor")).toHaveLength(1);
-		expect(store.getSnapshot("editor")[0]?.node).toBe("e");
-	});
+  test('scopes are independent', () => {
+    const store = createStatusStore()
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'g' })
+    store.upsert({ id: 'a', scope: 'editor', priority: 0, node: 'e' })
+    expect(store.getSnapshot('global')).toHaveLength(1)
+    expect(store.getSnapshot('editor')).toHaveLength(1)
+    expect(store.getSnapshot('editor')[0]?.node).toBe('e')
+  })
 
-	test("subscribe is notified on change and can unsubscribe", () => {
-		const store = createStatusStore();
-		let calls = 0;
-		const unsub = store.subscribe("global", () => {
-			calls++;
-		});
-		store.upsert({ id: "a", scope: "global", priority: 0, node: "a" });
-		expect(calls).toBe(1);
-		unsub();
-		store.upsert({ id: "b", scope: "global", priority: 0, node: "b" });
-		expect(calls).toBe(1);
-	});
-});
+  test('subscribe is notified on change and can unsubscribe', () => {
+    const store = createStatusStore()
+    let calls = 0
+    const unsub = store.subscribe('global', () => {
+      calls++
+    })
+    store.upsert({ id: 'a', scope: 'global', priority: 0, node: 'a' })
+    expect(calls).toBe(1)
+    unsub()
+    store.upsert({ id: 'b', scope: 'global', priority: 0, node: 'b' })
+    expect(calls).toBe(1)
+  })
+})
 
 // ---------- Components (DOM via happy-dom) ----------
-describe("StatusBar + StatusBarViewport", () => {
-	test("a producer's content appears in the viewport", () => {
-		const { getByRole } = render(
-			<StatusBarProvider>
-				<StatusBarViewport />
-				<StatusBar>Hello bar</StatusBar>
-			</StatusBarProvider>,
-		);
-		expect(getByRole("status").textContent).toContain("Hello bar");
-	});
+describe('StatusBar + StatusBarViewport', () => {
+  test("a producer's content appears in the viewport", () => {
+    const { getByRole } = render(
+      <StatusBarProvider>
+        <StatusBarViewport />
+        <StatusBar>Hello bar</StatusBar>
+      </StatusBarProvider>,
+    )
+    expect(getByRole('status').textContent).toContain('Hello bar')
+  })
 
-	test("replace mode shows only the most important (lowest-numbered) entry", () => {
-		const { getByRole } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="replace" />
-				<StatusBar priority={0}>Critical</StatusBar>
-				<StatusBar priority={5}>Minor</StatusBar>
-			</StatusBarProvider>,
-		);
-		const text = getByRole("status").textContent ?? "";
-		expect(text).toContain("Critical");
-		expect(text).not.toContain("Minor");
-	});
+  test('replace mode shows only the most important (lowest-numbered) entry', () => {
+    const { getByRole } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="replace" />
+        <StatusBar priority={0}>Critical</StatusBar>
+        <StatusBar priority={5}>Minor</StatusBar>
+      </StatusBarProvider>,
+    )
+    const text = getByRole('status').textContent ?? ''
+    expect(text).toContain('Critical')
+    expect(text).not.toContain('Minor')
+  })
 
-	test("stack mode shows all entries, most important (lowest) first", () => {
-		const { getByRole } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" separator=" | " />
-				<StatusBar priority={0}>Critical</StatusBar>
-				<StatusBar priority={5}>Minor</StatusBar>
-			</StatusBarProvider>,
-		);
-		const text = getByRole("status").textContent ?? "";
-		expect(text.indexOf("Critical")).toBeLessThan(text.indexOf("Minor"));
-	});
+  test('stack mode shows all entries, most important (lowest) first', () => {
+    const { getByRole } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" separator=" | " />
+        <StatusBar priority={0}>Critical</StatusBar>
+        <StatusBar priority={5}>Minor</StatusBar>
+      </StatusBarProvider>,
+    )
+    const text = getByRole('status').textContent ?? ''
+    expect(text.indexOf('Critical')).toBeLessThan(text.indexOf('Minor'))
+  })
 
-	test("entries are removed when the producer unmounts", () => {
-		function Harness({ show }: { show: boolean }) {
-			return (
-				<StatusBarProvider store={store}>
-					<StatusBarViewport />
-					{show && <StatusBar>Transient</StatusBar>}
-				</StatusBarProvider>
-			);
-		}
-		const store = createStatusStore();
-		const { rerender, getByRole } = render(<Harness show={true} />);
-		expect(getByRole("status").textContent).toContain("Transient");
-		rerender(<Harness show={false} />);
-		expect(getByRole("status").textContent).not.toContain("Transient");
-	});
+  test('entries are removed when the producer unmounts', () => {
+    function Harness({ show }: { show: boolean }) {
+      return (
+        <StatusBarProvider store={store}>
+          <StatusBarViewport />
+          {show && <StatusBar>Transient</StatusBar>}
+        </StatusBarProvider>
+      )
+    }
+    const store = createStatusStore()
+    const { rerender, getByRole } = render(<Harness show={true} />)
+    expect(getByRole('status').textContent).toContain('Transient')
+    rerender(<Harness show={false} />)
+    expect(getByRole('status').textContent).not.toContain('Transient')
+  })
 
-	test("the live region stays mounted when empty", () => {
-		const { getByRole } = render(
-			<StatusBarProvider>
-				<StatusBarViewport empty={<span>idle</span>} />
-			</StatusBarProvider>,
-		);
-		const region = getByRole("status");
-		expect(region).toBeTruthy();
-		expect(region.getAttribute("data-empty")).toBe("true");
-		expect(region.textContent).toContain("idle");
-	});
+  test('the live region stays mounted when empty', () => {
+    const { getByRole } = render(
+      <StatusBarProvider>
+        <StatusBarViewport empty={<span>idle</span>} />
+      </StatusBarProvider>,
+    )
+    const region = getByRole('status')
+    expect(region).toBeTruthy()
+    expect(region.getAttribute('data-empty')).toBe('true')
+    expect(region.textContent).toContain('idle')
+  })
 
-	test("useStatusBar().show() upserts a single entry", () => {
-		function Producer() {
-			const sb = useStatusBar();
-			// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
-			React.useEffect(() => {
-				sb.show("first");
-				sb.show("second");
-			}, []);
-			return null;
-		}
-		const { getByRole } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" />
-				<Producer />
-			</StatusBarProvider>,
-		);
-		const text = getByRole("status").textContent ?? "";
-		expect(text).toContain("second");
-		expect(text).not.toContain("first");
-	});
-});
+  test('useStatusBar().show() upserts a single entry', () => {
+    function Producer() {
+      const sb = useStatusBar()
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
+      React.useEffect(() => {
+        sb.show('first')
+        sb.show('second')
+      }, [])
+      return null
+    }
+    const { getByRole } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" />
+        <Producer />
+      </StatusBarProvider>,
+    )
+    const text = getByRole('status').textContent ?? ''
+    expect(text).toContain('second')
+    expect(text).not.toContain('first')
+  })
+})
 
 // ---------- Alignment (pinned sides) ----------
-describe("align", () => {
-	test("entries split into start and end groups", () => {
-		const { container } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" />
-				<StatusBar align="start">Left</StatusBar>
-				<StatusBar align="end">Right</StatusBar>
-			</StatusBarProvider>,
-		);
-		const start = container.querySelector(".statusbar__group--start");
-		const end = container.querySelector(".statusbar__group--end");
-		expect(start?.textContent).toContain("Left");
-		expect(start?.textContent).not.toContain("Right");
-		expect(end?.textContent).toContain("Right");
-		expect(end?.textContent).not.toContain("Left");
-	});
+describe('align', () => {
+  test('entries split into start and end groups', () => {
+    const { container } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" />
+        <StatusBar align="start">Left</StatusBar>
+        <StatusBar align="end">Right</StatusBar>
+      </StatusBarProvider>,
+    )
+    const start = container.querySelector('.statusbar__group--start')
+    const end = container.querySelector('.statusbar__group--end')
+    expect(start?.textContent).toContain('Left')
+    expect(start?.textContent).not.toContain('Right')
+    expect(end?.textContent).toContain('Right')
+    expect(end?.textContent).not.toContain('Left')
+  })
 
-	test("end group is reversed so the most important entry sits outermost (right)", () => {
-		const { container } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" />
-				<StatusBar align="end" priority={0}>
-					High
-				</StatusBar>
-				<StatusBar align="end" priority={5}>
-					Low
-				</StatusBar>
-			</StatusBarProvider>,
-		);
-		const end = container.querySelector(".statusbar__group--end");
-		const order = Array.from(
-			end?.querySelectorAll(".statusbar__item") ?? [],
-		).map((el) => el.textContent);
-		// least-important first (inner/left), most-important last (outer/right)
-		expect(order).toEqual(["Low", "High"]);
-	});
+  test('end group is reversed so the most important entry sits outermost (right)', () => {
+    const { container } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" />
+        <StatusBar align="end" priority={0}>
+          High
+        </StatusBar>
+        <StatusBar align="end" priority={5}>
+          Low
+        </StatusBar>
+      </StatusBarProvider>,
+    )
+    const end = container.querySelector('.statusbar__group--end')
+    const order = Array.from(end?.querySelectorAll('.statusbar__item') ?? []).map(
+      (el) => el.textContent,
+    )
+    // least-important first (inner/left), most-important last (outer/right)
+    expect(order).toEqual(['Low', 'High'])
+  })
 
-	test("a spacer is rendered only when there are end entries", () => {
-		const withEnd = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" />
-				<StatusBar align="end">Right</StatusBar>
-			</StatusBarProvider>,
-		);
-		expect(withEnd.container.querySelector(".statusbar__spacer")).toBeTruthy();
-		cleanup();
+  test('a spacer is rendered only when there are end entries', () => {
+    const withEnd = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" />
+        <StatusBar align="end">Right</StatusBar>
+      </StatusBarProvider>,
+    )
+    expect(withEnd.container.querySelector('.statusbar__spacer')).toBeTruthy()
+    cleanup()
 
-		const startOnly = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" />
-				<StatusBar>Left</StatusBar>
-			</StatusBarProvider>,
-		);
-		expect(startOnly.container.querySelector(".statusbar__spacer")).toBeNull();
-	});
-});
+    const startOnly = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" />
+        <StatusBar>Left</StatusBar>
+      </StatusBarProvider>,
+    )
+    expect(startOnly.container.querySelector('.statusbar__spacer')).toBeNull()
+  })
+})
 
 // ---------- Overflow clipping ----------
-describe("overflow", () => {
-	test('overflow="clip" adds the modifier class, data-clip, and a measure layer', () => {
-		const { getByRole, container } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" overflow="clip" />
-				<StatusBar>One</StatusBar>
-			</StatusBarProvider>,
-		);
-		const region = getByRole("status");
-		expect(region.className).toContain("statusbar--clip");
-		expect(region.getAttribute("data-clip")).toBe("true");
-		expect(container.querySelector(".statusbar__measure")).toBeTruthy();
-	});
+describe('overflow', () => {
+  test('overflow="clip" adds the modifier class, data-clip, and a measure layer', () => {
+    const { getByRole, container } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" overflow="clip" />
+        <StatusBar>One</StatusBar>
+      </StatusBarProvider>,
+    )
+    const region = getByRole('status')
+    expect(region.className).toContain('statusbar--clip')
+    expect(region.getAttribute('data-clip')).toBe('true')
+    expect(container.querySelector('.statusbar__measure')).toBeTruthy()
+  })
 
-	test("overflow is off by default (no clip class, no measure layer)", () => {
-		const { getByRole, container } = render(
-			<StatusBarProvider>
-				<StatusBarViewport mode="stack" />
-				<StatusBar>One</StatusBar>
-			</StatusBarProvider>,
-		);
-		const region = getByRole("status");
-		expect(region.className).not.toContain("statusbar--clip");
-		expect(region.getAttribute("data-clip")).toBeNull();
-		expect(container.querySelector(".statusbar__measure")).toBeNull();
-	});
-});
+  test('overflow is off by default (no clip class, no measure layer)', () => {
+    const { getByRole, container } = render(
+      <StatusBarProvider>
+        <StatusBarViewport mode="stack" />
+        <StatusBar>One</StatusBar>
+      </StatusBarProvider>,
+    )
+    const region = getByRole('status')
+    expect(region.className).not.toContain('statusbar--clip')
+    expect(region.getAttribute('data-clip')).toBeNull()
+    expect(container.querySelector('.statusbar__measure')).toBeNull()
+  })
+})
 
 // ---------- fitCount (pure overflow math) ----------
-describe("fitCount", () => {
-	test("returns the count whose cumulative right edge fits", () => {
-		// edges: item0 ends at 30, item1 at 70, item2 at 120
-		expect(fitCount([30, 70, 120], 100)).toBe(2);
-		expect(fitCount([30, 70, 120], 120)).toBe(3);
-		expect(fitCount([30, 70, 120], 25)).toBe(0);
-	});
+describe('fitCount', () => {
+  test('returns the count whose cumulative right edge fits', () => {
+    // edges: item0 ends at 30, item1 at 70, item2 at 120
+    expect(fitCount([30, 70, 120], 100)).toBe(2)
+    expect(fitCount([30, 70, 120], 120)).toBe(3)
+    expect(fitCount([30, 70, 120], 25)).toBe(0)
+  })
 
-	test("everything fits when available is generous", () => {
-		expect(fitCount([10, 20, 30], 999)).toBe(3);
-	});
+  test('everything fits when available is generous', () => {
+    expect(fitCount([10, 20, 30], 999)).toBe(3)
+  })
 
-	test("empty input fits trivially", () => {
-		expect(fitCount([], 100)).toBe(0);
-	});
+  test('empty input fits trivially', () => {
+    expect(fitCount([], 100)).toBe(0)
+  })
 
-	test("an exact fit at the boundary is included", () => {
-		expect(fitCount([50, 100], 100)).toBe(2);
-	});
-});
+  test('an exact fit at the boundary is included', () => {
+    expect(fitCount([50, 100], 100)).toBe(2)
+  })
+})

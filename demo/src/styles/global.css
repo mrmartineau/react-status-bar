@@ -8,146 +8,146 @@
  * colour scheme (toggled via :root.zui-dark / :root.zui-light).
  */
 :root {
-	--bg: var(--color-background);
-	--bg-2: var(--color-surface);
-	--panel: var(--color-surface);
-	--panel-2: oklch(from var(--color-surface) calc(l + 0.04) c h);
-	--border: var(--color-border);
-	--text: var(--color-text);
-	--muted: oklch(from var(--color-text) l c h / 0.66);
-	--accent: var(--color-theme);
-	--radius: var(--radius-lg);
-	--mono: var(--font-code);
-	--bar-h: 40px;
+  --bg: var(--color-background);
+  --bg-2: var(--color-surface);
+  --panel: var(--color-surface);
+  --panel-2: oklch(from var(--color-surface) calc(l + 0.04) c h);
+  --border: var(--color-border);
+  --text: var(--color-text);
+  --muted: oklch(from var(--color-text) l c h / 0.66);
+  --accent: var(--color-theme);
+  --radius: var(--radius-lg);
+  --mono: var(--font-code);
+  --bar-h: 40px;
 }
 
 /* Reserve room for the fixed global status bar so the theme footer clears it. */
 body {
-	padding-bottom: var(--bar-h);
+  padding-bottom: var(--bar-h);
 }
 
 a.site-logo {
-	font-weight: normal !important;
+  font-weight: normal !important;
 }
 
 /* ---------- Page ---------- */
 .page__head {
-	margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-lg);
 }
 
 .page__title {
-	margin: 0 0 var(--space-2xs);
-	font-size: var(--step-5);
-	letter-spacing: -0.02em;
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--step-5);
+  letter-spacing: -0.02em;
 }
 
 .page__lead {
-	margin: 0;
-	color: var(--muted);
-	max-width: 62ch;
+  margin: 0;
+  color: var(--muted);
+  max-width: 62ch;
 }
 
 /* ZUI Card already provides surface/border/radius/padding; only outer rhythm. */
 .card {
-	margin-bottom: var(--space-md);
+  margin-bottom: var(--space-md);
 }
 
 .card p {
-	color: var(--muted);
+  color: var(--muted);
 }
 
 .card strong {
-	color: var(--text);
+  color: var(--text);
 }
 
 .demo-subhead {
-	margin: var(--space-md) 0 var(--space-2xs);
-	font-size: var(--step-0);
-	color: var(--text);
+  margin: var(--space-md) 0 var(--space-2xs);
+  font-size: var(--step-0);
+  color: var(--text);
 }
 
 .demo-subhead:first-child {
-	margin-top: 0;
+  margin-top: 0;
 }
 
 /* ---------- Demo surface ---------- */
 .surface {
-	position: relative;
-	background: var(--bg);
-	border: var(--border-style) 1px var(--border);
-	border-radius: var(--radius);
-	margin: var(--space-sm) 0;
-	overflow: hidden;
+  position: relative;
+  background: var(--bg);
+  border: var(--border-style) 1px var(--border);
+  border-radius: var(--radius);
+  margin: var(--space-sm) 0;
+  overflow: hidden;
 }
 
 .surface__label {
-	display: block;
-	font-size: var(--step--2);
-	color: var(--muted);
-	font-family: var(--mono);
-	padding: var(--space-2xs) var(--space-xs);
-	border-bottom: 1px dashed var(--border);
-	background: var(--bg-2);
+  display: block;
+  font-size: var(--step--2);
+  color: var(--muted);
+  font-family: var(--mono);
+  padding: var(--space-2xs) var(--space-xs);
+  border-bottom: 1px dashed var(--border);
+  background: var(--bg-2);
 }
 
 .surface__body {
-	padding: var(--space-2xs) var(--space-xs);
+  padding: var(--space-2xs) var(--space-xs);
 }
 
 /* ---------- Controls ---------- */
 .controls {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: var(--space-2xs);
-	margin: var(--space-2xs) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin: var(--space-2xs) 0;
 }
 
 .controls__hint {
-	color: var(--muted);
-	font-size: var(--step--1);
-	font-family: var(--mono);
+  color: var(--muted);
+  font-size: var(--step--1);
+  font-family: var(--mono);
 }
 
 .field {
-	display: inline-flex;
-	flex-direction: column;
-	gap: 4px;
-	font-size: var(--step--2);
-	color: var(--muted);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--step--2);
+  color: var(--muted);
 }
 
 .input-num {
-	width: 6rem;
+  width: 6rem;
 }
 
 .charcounter {
-	margin-top: var(--space-sm);
+  margin-top: var(--space-sm);
 }
 
 /* ---------- Code blocks (Astro + Shiki dual theme) ---------- */
 .code {
-	border: var(--border-style) 1px var(--border);
-	border-radius: var(--radius);
-	overflow: hidden;
-	margin: var(--space-sm) 0 0;
+  border: var(--border-style) 1px var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin: var(--space-sm) 0 0;
 }
 
 .code__head {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 4px 4px 4px var(--space-xs);
-	border-bottom: var(--border-style) 1px var(--border);
-	background: var(--bg-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 4px 4px var(--space-xs);
+  border-bottom: var(--border-style) 1px var(--border);
+  background: var(--bg-2);
 }
 
 .code__lang {
-	font-family: var(--mono);
-	font-size: var(--step--2);
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--muted);
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
 /* Drive Shiki dual themes from the active colour scheme. Defaults to light;
@@ -156,402 +156,402 @@ a.site-logo {
    Base (lowest-specificity) rules first to keep the cascade tidy. */
 .astro-code,
 .astro-code span {
-	color: var(--shiki-light);
+  color: var(--shiki-light);
 }
 
 .astro-code {
-	background-color: var(--shiki-light-bg);
+  background-color: var(--shiki-light-bg);
 }
 
 .code .astro-code {
-	margin: 0;
-	padding: var(--space-sm) var(--space-md);
-	overflow-x: auto;
-	font-size: var(--step--1);
-	border-radius: 0;
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  overflow-x: auto;
+  font-size: var(--step--1);
+  border-radius: 0;
 }
 
 :root.zui-dark .astro-code,
 :root.zui-dark .astro-code span {
-	color: var(--shiki-dark);
+  color: var(--shiki-dark);
 }
 
 :root.zui-dark .astro-code {
-	background-color: var(--shiki-dark-bg);
+  background-color: var(--shiki-dark-bg);
 }
 
 @media (prefers-color-scheme: dark) {
-	:root:not(.zui-light) .astro-code,
-	:root:not(.zui-light) .astro-code span {
-		color: var(--shiki-dark);
-	}
-	:root:not(.zui-light) .astro-code {
-		background-color: var(--shiki-dark-bg);
-	}
+  :root:not(.zui-light) .astro-code,
+  :root:not(.zui-light) .astro-code span {
+    color: var(--shiki-dark);
+  }
+  :root:not(.zui-light) .astro-code {
+    background-color: var(--shiki-dark-bg);
+  }
 }
 
 /* ---------- Install widget ---------- */
 .install {
-	max-width: 460px;
-	border: var(--border-style) 1px var(--border);
-	border-radius: var(--radius);
-	overflow: hidden;
-	background: var(--bg);
+  max-width: 460px;
+  border: var(--border-style) 1px var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg);
 }
 
 .install__tabs {
-	display: flex;
-	gap: 2px;
-	padding: 4px;
-	border-bottom: var(--border-style) 1px var(--border);
-	background: var(--bg-2);
+  display: flex;
+  gap: 2px;
+  padding: 4px;
+  border-bottom: var(--border-style) 1px var(--border);
+  background: var(--bg-2);
 }
 
 .install__cmd {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: var(--space-sm);
-	padding: var(--space-xs) var(--space-sm);
-	font-family: var(--mono);
-	font-size: var(--step--1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  font-family: var(--mono);
+  font-size: var(--step--1);
 
-	code {
-		background-color: transparent !important;
-	}
+  code {
+    background-color: transparent !important;
+  }
 }
 
 .install__prompt {
-	color: var(--accent);
-	user-select: none;
-	margin-right: 4px;
+  color: var(--accent);
+  user-select: none;
+  margin-right: 4px;
 }
 
 /* ---------- Feature grid ---------- */
 .features {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-	gap: var(--space-2xs);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-2xs);
 }
 
 .feature {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	background: var(--bg-2);
-	border: var(--border-style) 1px var(--border);
-	border-radius: var(--radius);
-	padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--bg-2);
+  border: var(--border-style) 1px var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-sm);
 }
 
 .feature__icon {
-	display: inline-flex;
-	font-size: var(--step-4);
-	color: var(--accent);
+  display: inline-flex;
+  font-size: var(--step-4);
+  color: var(--accent);
 }
 
 .feature__title {
-	font-size: var(--step-0);
+  font-size: var(--step-0);
 }
 
 .feature__body {
-	font-size: var(--step--1);
-	color: var(--muted);
+  font-size: var(--step--1);
+  color: var(--muted);
 }
 
 /* ---------- Props table tweaks (ZUI Table owns the rest) ---------- */
 .proptable-wrap {
-	overflow-x: auto;
-	margin-top: var(--space-2xs);
+  overflow-x: auto;
+  margin-top: var(--space-2xs);
 }
 
 .zui-code.proptable__type {
-	color: var(--accent);
+  color: var(--accent);
 }
 
 .muted {
-	color: var(--muted);
+  color: var(--muted);
 }
 
 /* ---------- Callout ---------- */
 .callout {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-	border: var(--border-style) 1px var(--border);
-	border-left-width: 3px;
-	border-radius: var(--radius-md);
-	padding: var(--space-xs) var(--space-sm);
-	margin: var(--space-sm) 0 0;
-	font-size: var(--step--1);
-	background: var(--bg-2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border: var(--border-style) 1px var(--border);
+  border-left-width: 3px;
+  border-radius: var(--radius-md);
+  padding: var(--space-xs) var(--space-sm);
+  margin: var(--space-sm) 0 0;
+  font-size: var(--step--1);
+  background: var(--bg-2);
 }
 
 .callout p {
-	margin: 0;
+  margin: 0;
 }
 
 .callout--info {
-	border-left-color: var(--accent);
+  border-left-color: var(--accent);
 }
 
 .callout--warn {
-	border-left-color: var(--color-warning);
+  border-left-color: var(--color-warning);
 }
 
 .callout strong {
-	color: var(--text);
+  color: var(--text);
 }
 
 /* ---------- Step (getting started) ---------- */
 .step {
-	margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-lg);
 }
 
 .step__head {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	margin-bottom: var(--space-2xs);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-bottom: var(--space-2xs);
 }
 
 .step__num {
-	display: grid;
-	place-items: center;
-	width: 26px;
-	height: 26px;
-	border-radius: var(--radius-full);
-	background: var(--accent);
-	color: var(--color-background);
-	font-size: var(--step--1);
-	font-weight: 700;
-	flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  color: var(--color-background);
+  font-size: var(--step--1);
+  font-weight: 700;
+  flex-shrink: 0;
 }
 
 .step__title {
-	margin: 0;
-	font-size: var(--step-2);
+  margin: 0;
+  font-size: var(--step-2);
 }
 
 .step__body {
-	padding-left: calc(26px + var(--space-2xs));
+  padding-left: calc(26px + var(--space-2xs));
 }
 
 .step__body p {
-	color: var(--muted);
-	margin: 0 0 var(--space-2xs);
+  color: var(--muted);
+  margin: 0 0 var(--space-2xs);
 }
 
 .step__body strong {
-	color: var(--text);
+  color: var(--text);
 }
 
 /* ---------- Tag list ---------- */
 .tag-list {
-	list-style: none;
-	padding: 0;
-	margin: var(--space-xs) 0 0;
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
+  list-style: none;
+  padding: 0;
+  margin: var(--space-xs) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .tag-list li {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	background: var(--bg-2);
-	border: var(--border-style) 1px var(--border);
-	border-radius: var(--radius-md);
-	padding: var(--space-2xs) var(--space-xs);
-	font-size: var(--step--1);
-	color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  background: var(--bg-2);
+  border: var(--border-style) 1px var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2xs) var(--space-xs);
+  font-size: var(--step--1);
+  color: var(--muted);
 }
 
 .tag-list .prio {
-	font-family: var(--mono);
-	color: var(--accent);
-	font-size: var(--step--2);
+  font-family: var(--mono);
+  color: var(--accent);
+  font-size: var(--step--2);
 }
 
 .tag-list button {
-	margin-left: auto;
+  margin-left: auto;
 }
 
 .doclink {
-	color: var(--accent);
-	text-decoration: none;
-	font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
 }
 
 .doclink:hover {
-	text-decoration: underline;
+  text-decoration: underline;
 }
 
 /* ---------- Hero ---------- */
 .hero {
-	margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-xl);
 }
 
 .hero__eyebrow {
-	display: inline-block;
-	font-family: var(--mono);
-	font-size: var(--step--2);
-	color: var(--accent);
-	background: oklch(from var(--accent) l c h / 0.12);
-	border: var(--border-style) 1px oklch(from var(--accent) l c h / 0.3);
-	padding: 2px var(--space-2xs);
-	border-radius: var(--radius-full);
-	margin-bottom: var(--space-sm);
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: var(--step--2);
+  color: var(--accent);
+  background: oklch(from var(--accent) l c h / 0.12);
+  border: var(--border-style) 1px oklch(from var(--accent) l c h / 0.3);
+  padding: 2px var(--space-2xs);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-sm);
 }
 
 .hero__title {
-	margin: 0 0 var(--space-2xs);
-	font-size: var(--step-8);
-	letter-spacing: -0.03em;
-	background: linear-gradient(120deg, var(--color-text), var(--accent));
-	-webkit-background-clip: text;
-	background-clip: text;
-	color: transparent;
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--step-8);
+  letter-spacing: -0.03em;
+  background: linear-gradient(120deg, var(--color-text), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .hero__lead {
-	margin: 0 0 var(--space-md);
-	font-size: var(--step-1);
-	color: var(--muted);
-	max-width: 60ch;
+  margin: 0 0 var(--space-md);
+  font-size: var(--step-1);
+  color: var(--muted);
+  max-width: 60ch;
 }
 
 .hero__lead strong {
-	color: var(--text);
+  color: var(--text);
 }
 
 .hero__links {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--space-2xs);
-	margin-top: var(--space-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-md);
 }
 
 /* ---------- Fake window (portals demo) ---------- */
 .window {
-	border: var(--border-style) 1px var(--border);
-	border-radius: var(--radius);
-	overflow: hidden;
-	background: var(--bg-2);
-	margin: var(--space-sm) 0;
+  border: var(--border-style) 1px var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--bg-2);
+  margin: var(--space-sm) 0;
 }
 
 .window__bar {
-	display: flex;
-	align-items: center;
-	gap: var(--space-3xs);
-	padding: var(--space-2xs) var(--space-xs);
-	background: var(--panel-2);
-	border-bottom: var(--border-style) 1px var(--border);
-	font-size: var(--step--1);
-	color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  padding: var(--space-2xs) var(--space-xs);
+  background: var(--panel-2);
+  border-bottom: var(--border-style) 1px var(--border);
+  font-size: var(--step--1);
+  color: var(--muted);
 }
 
 .window__dot {
-	width: 11px;
-	height: 11px;
-	border-radius: var(--radius-full);
-	background: var(--border);
+  width: 11px;
+  height: 11px;
+  border-radius: var(--radius-full);
+  background: var(--border);
 }
 
 .window__body {
-	padding: var(--space-sm);
-	min-height: 90px;
-	color: var(--muted);
+  padding: var(--space-sm);
+  min-height: 90px;
+  color: var(--muted);
 }
 
 .window__status {
-	border-top: var(--border-style) 1px var(--border);
-	background: var(--panel);
-	padding: 0 var(--space-xs);
-	min-height: 30px;
-	display: flex;
-	align-items: center;
-	font-size: var(--step--1);
+  border-top: var(--border-style) 1px var(--border);
+  background: var(--panel);
+  padding: 0 var(--space-xs);
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  font-size: var(--step--1);
 }
 
 /* ---------- The library's status bar (shared classes) ---------- */
 .statusbar {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	min-height: 28px;
-	font-size: var(--step--1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-height: 28px;
+  font-size: var(--step--1);
 }
 
 .statusbar__item {
-	white-space: nowrap;
+  white-space: nowrap;
 }
 
 .statusbar__sep {
-	opacity: 0.5;
+  opacity: 0.5;
 }
 
 .statusbar[data-empty] {
-	color: var(--muted);
-	font-style: italic;
+  color: var(--muted);
+  font-style: italic;
 }
 
 /* Pinned sides: each side is a flex group; the spacer pushes them apart. */
 .statusbar__group {
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  min-width: 0;
 }
 
 .statusbar__spacer {
-	flex: 1 1 auto;
+  flex: 1 1 auto;
 }
 
 /* Overflow clipping: one line, and contain the off-screen measure layer. */
 .statusbar--clip {
-	position: relative;
-	flex-wrap: nowrap;
-	overflow: hidden;
+  position: relative;
+  flex-wrap: nowrap;
+  overflow: hidden;
 }
 
 .statusbar[data-clipped]::after {
-	content: "…";
-	opacity: 0.5;
-	padding-inline-start: var(--space-2xs);
+  content: '…';
+  opacity: 0.5;
+  padding-inline-start: var(--space-2xs);
 }
 
 /* ---------- Fixed global bar ---------- */
 .statusbar-shell {
-	position: fixed;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	min-height: var(--bar-h);
-	display: flex;
-	align-items: center;
-	gap: var(--space-2xs);
-	padding: 0 var(--space-md);
-	background: oklch(from var(--color-surface) l c h / 0.92);
-	backdrop-filter: blur(8px);
-	border-top: var(--border-style) 1px var(--border);
-	font-size: var(--step--1);
-	z-index: var(--z-2);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: var(--bar-h);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: 0 var(--space-md);
+  background: oklch(from var(--color-surface) l c h / 0.92);
+  backdrop-filter: blur(8px);
+  border-top: var(--border-style) 1px var(--border);
+  font-size: var(--step--1);
+  z-index: var(--z-2);
 }
 
 .statusbar-shell__idle {
-	color: var(--muted);
-	font-style: italic;
+  color: var(--muted);
+  font-style: italic;
 }
 
 .statusbar-shell .statusbar {
-	min-height: var(--bar-h);
+  min-height: var(--bar-h);
 }
 
 @media (max-width: 720px) {
-	.step__body {
-		padding-left: 0;
-	}
+  .step__body {
+    padding-left: 0;
+  }
 }

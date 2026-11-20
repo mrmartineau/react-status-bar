@@ -1,5 +1,5 @@
-import { StatusBar, StatusBarProvider } from "@mrmartineau/react-status-bar";
-import { globalStore } from "../lib/status-store";
+import { StatusBar, StatusBarProvider } from '@mrmartineau/react-status-bar'
+import { globalStore } from '../lib/status-store'
 
 /**
  * Pushes a single entry into the shared global bar while the page is mounted.
@@ -8,9 +8,9 @@ import { globalStore } from "../lib/status-store";
  * share `globalStore`.
  */
 export function PageStatus({ label }: { label: string }) {
-	return (
-		<StatusBarProvider store={globalStore}>
-			<StatusBar priority={1}>{label}</StatusBar>
-		</StatusBarProvider>
-	);
+  return (
+    <StatusBarProvider store={globalStore}>
+      <StatusBar priority={1}>{label}</StatusBar>
+    </StatusBarProvider>
+  )
 }
