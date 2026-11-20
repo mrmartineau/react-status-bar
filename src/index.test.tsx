@@ -199,7 +199,7 @@ describe("StatusBar + StatusBarViewport", () => {
 	test("useStatusBar().show() upserts a single entry", () => {
 		function Producer() {
 			const sb = useStatusBar();
-			// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
+			// oxlint-disable-next-line react-hooks/exhaustive-deps -- run once on mount
 			React.useEffect(() => {
 				sb.show("first");
 				sb.show("second");

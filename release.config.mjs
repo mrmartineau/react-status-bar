@@ -9,7 +9,7 @@ export default {
 			{
 				assets: ["package.json"],
 				message:
-					// biome-ignore lint/suspicious/noTemplateCurlyInString: semantic-release interpolates these placeholders at release time
+					// semantic-release interpolates these placeholders at release time
 					"chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}",
 			},
 		],

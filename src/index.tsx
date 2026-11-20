@@ -287,7 +287,7 @@ export function StatusBarViewport({
 	// The live region container is ALWAYS mounted so screen readers have a
 	// stable node to announce changes into. Only its contents change.
 	const content = (
-		// biome-ignore lint/a11y/useSemanticElements: a live region is intentionally a div with role="status", not an <output> (which is form-associated)
+		// oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a live region is intentionally a div with role="status", not an <output> (which is form-associated)
 		<div
 			ref={containerRef}
 			role="status"
