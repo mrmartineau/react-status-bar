@@ -1,4 +1,4 @@
-import { createStatusStore } from "@mrmartineau/react-status-bar";
+import { createStatusStore } from '@mrmartineau/react-status-bar'
 
 /**
  * A single store shared across every island on the page.
@@ -11,4 +11,4 @@ import { createStatusStore } from "@mrmartineau/react-status-bar";
  * injectable store. (Per page load only; Astro is an MPA, so navigation starts
  * fresh, which is exactly what we want for the per-page status.)
  */
-export const globalStore = createStatusStore();
+export const globalStore = createStatusStore()

@@ -1,31 +1,31 @@
 {
-	"name": "react-status-bar-demo",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "portless run astro dev",
-		"build": "astro build",
-		"preview": "astro preview",
-		"check": "astro check",
-		"deploy": "astro build && wrangler deploy"
-	},
-	"dependencies": {
-		"@astrojs/react": "^5.0.0",
-		"@mrmartineau/zui": "^1.2.0",
-		"@mrmartineau/zui-theme": "^1.0.0",
-		"@phosphor-icons/react": "^2",
-		"@phosphor-icons/web": "^2",
-		"astro": "^6.0.0",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
-	},
-	"devDependencies": {
-		"@astrojs/check": "^0.9.4",
-		"@types/react": "^19.0.0",
-		"@types/react-dom": "^19.0.0",
-		"typescript": "^5.9.3",
-		"wrangler": "^4.103.0"
-	},
-	"portless": "status-bar"
+  "name": "react-status-bar-demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "portless run astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "deploy": "astro build && wrangler deploy"
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.0",
+    "@mrmartineau/zui": "^1.2.0",
+    "@mrmartineau/zui-theme": "^1.0.0",
+    "@phosphor-icons/react": "^2",
+    "@phosphor-icons/web": "^2",
+    "astro": "^6.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.103.0"
+  },
+  "portless": "status-bar"
 }

@@ -1,9 +1,5 @@
-import {
-	StatusBar,
-	StatusBarProvider,
-	StatusBarViewport,
-} from "@mrmartineau/react-status-bar";
-import { globalStore } from "../lib/status-store";
+import { StatusBar, StatusBarProvider, StatusBarViewport } from '@mrmartineau/react-status-bar'
+import { globalStore } from '../lib/status-store'
 
 /**
  * The always-on global bar, portaled into the fixed `#statusbar-global` node in
@@ -11,20 +7,18 @@ import { globalStore } from "../lib/status-store";
  * labels, etc.) show up here.
  */
 export function GlobalStatusBar() {
-	return (
-		<StatusBarProvider store={globalStore}>
-			<StatusBarViewport
-				portalTarget="#statusbar-global"
-				mode="stack"
-				separator="•"
-				ariaLive="polite"
-				empty={
-					<span className="statusbar-shell__idle">idle — no global status</span>
-				}
-			/>
-			{/* Baseline entry so the bar is never empty. No priority → lowest, so
+  return (
+    <StatusBarProvider store={globalStore}>
+      <StatusBarViewport
+        portalTarget="#statusbar-global"
+        mode="stack"
+        separator="•"
+        ariaLive="polite"
+        empty={<span className="statusbar-shell__idle">idle — no global status</span>}
+      />
+      {/* Baseline entry so the bar is never empty. No priority → lowest, so
 			    it always sits last, behind any page label. */}
-			<StatusBar>@mrmartineau/react-status-bar</StatusBar>
-		</StatusBarProvider>
-	);
+      <StatusBar>@mrmartineau/react-status-bar</StatusBar>
+    </StatusBarProvider>
+  )
 }
